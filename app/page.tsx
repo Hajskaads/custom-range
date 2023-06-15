@@ -1,6 +1,6 @@
 "use client";
 
-import Range from "@components/range/range";
+import Range from "@components/range/fixedRange/fixedRange";
 
 export default function Home() {
   return (
