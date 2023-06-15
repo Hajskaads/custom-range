@@ -7,11 +7,80 @@ import { BulletType } from "@lib/types";
 const minBullet: BulletType = "min";
 const maxBullet: BulletType = "max";
 
+/**
+ * Finds the value in the given array that is closest to the target number.
+ * If the target number is exactly between two values, it returns the highest or lowest value based on the isMax flag.
+ *
+ * @param {number[]} numbers - Array of numbers to search.
+ * @param {number} target - Target number.
+ * @param {boolean} isMax - Flag indicating whether to return the highest or lowest value when equidistant.
+ * @returns {number} - The value in the array that is closest to the target number.
+ */
+function findClosestValue(
+  target: number,
+  numbers: number[],
+  isMax: boolean
+): number {
+  let closestValue = numbers[0];
+
+  // Iterate over the numbers array
+  for (let i = 1; i < numbers.length; i++) {
+    const currentNumber = numbers[i];
+
+    // Check if the absolute difference between the current number and target is smaller than the closest difference so far
+    if (Math.abs(currentNumber - target) < Math.abs(closestValue - target)) {
+      closestValue = currentNumber;
+    } else if (
+      Math.abs(currentNumber - target) === Math.abs(closestValue - target)
+    ) {
+      // Check if the numbers are equidistant from the target
+      if (isMax) {
+        closestValue = Math.max(currentNumber, closestValue);
+      } else {
+        closestValue = Math.min(currentNumber, closestValue);
+      }
+    }
+  }
+
+  return closestValue;
+}
+
+/**
+ * Transforms a given number from an array to a percentage based on the minimum and maximum values of the array.
+ * @param {number} number - The input number to be transformed.
+ * @param {number[]} array - The array of numbers.
+ * @returns {number} - The percentage value corresponding to the input number.
+ */
+function transformToPercentage(number: number, array: number[]) {
+  const minValue = Math.min(...array);
+  const maxValue = Math.max(...array);
+
+  const percentage = ((number - minValue) / (maxValue - minValue)) * 100;
+  return percentage;
+}
+
+/**
+ * Transforms an array of numbers to a percentage scale based on the minimum and maximum values.
+ * @param {number[]} array - The array of numbers.
+ * @returns {number[]} - The array of numbers transformed to a percentage scale.
+ */
+function transformArrayToPercentage(array: number[]) {
+  // Find the minimum and maximum values in the array
+  const minValue = Math.min(...array);
+  const maxValue = Math.max(...array);
+
+  // Calculate the percentage for each number in the array
+  const percentageArray = array.map((number) => {
+    return ((number - minValue) / (maxValue - minValue)) * 100;
+  });
+
+  // Return the array of numbers transformed to a percentage scale
+  return percentageArray;
+}
+
 const FixedRange: React.FC = () => {
-  const [min, setMin] = useState<number>(0);
-  const [max, setMax] = useState<number>(100);
-  const [minValue, setMinValue] = useState<number>(0);
-  const [maxValue, setMaxValue] = useState<number>(100);
+  const [minValue, setMinValue] = useState<number>(1.99);
+  const [maxValue, setMaxValue] = useState<number>(70.99);
   const [fixedValues, setFixedValues] = useState<number[]>([
     1.99, 5.99, 10.99, 30.99, 50.99, 70.99,
   ]);
@@ -19,6 +88,9 @@ const FixedRange: React.FC = () => {
   const [activeBullet, setActiveBullet] = useState<BulletType | null>(null);
   const [onTopBullet, setOnTopBullet] = useState<BulletType>("max");
   const rangeRef = useRef<HTMLDivElement | null>(null);
+
+  const fixedValuesToPercentage: number[] =
+    transformArrayToPercentage(fixedValues);
 
   useEffect(() => {
     const handleMouseUp = () => {
@@ -57,21 +129,27 @@ const FixedRange: React.FC = () => {
       if (
         activeBullet === minBullet &&
         newValue !== minValue &&
-        newValue > min - 50 // If the condition is removed, bullet is re-rendered when it doesn't make sense, and if newValue > min is left, when moving the cursor very quickly, the minimum is not reached.
+        newValue > Math.min(...fixedValues) - 50 // If the condition is removed, bullet is re-rendered when it doesn't make sense, and if newValue > min is left, when moving the cursor very quickly, the minimum is not reached.
       ) {
         const newMinValue = +Math.max(
-          Math.min(newValue, maxValue),
-          min
+          Math.min(
+            findClosestValue(newValue, fixedValuesToPercentage, false),
+            maxValue
+          ),
+          Math.min(...fixedValues)
         ).toFixed(2);
         setMinValue(newMinValue);
       } else if (
         activeBullet === maxBullet &&
         newValue !== maxValue &&
-        newValue < max * 1.5 // If the condition is removed, it is re-rendered when it doesn't make sense, and if newValue < max is left without a factor, when moving the cursor very quickly, the maximum is not reached.
+        newValue < Math.max(...fixedValues) * 1.5 // If the condition is removed, it is re-rendered when it doesn't make sense, and if newValue < max is left without a factor, when moving the cursor very quickly, the maximum is not reached.
       ) {
         const newMaxValue = +Math.min(
-          Math.max(newValue, minValue),
-          max
+          Math.max(
+            findClosestValue(newValue, fixedValuesToPercentage, true),
+            minValue
+          ),
+          Math.max(...fixedValues)
         ).toFixed(2);
         setMaxValue(newMaxValue);
       }
@@ -85,7 +163,7 @@ const FixedRange: React.FC = () => {
       // @ts-ignore
       document.removeEventListener("mousemove", handleMouseMove);
     };
-  }, [isDragging, activeBullet, max, maxValue, min, minValue]);
+  }, [isDragging, activeBullet, maxValue, minValue]);
 
   return (
     <div className={s.root}>
@@ -93,19 +171,19 @@ const FixedRange: React.FC = () => {
       <div className={s.container} ref={rangeRef}>
         <RangeBullet
           isActive={activeBullet === minBullet}
-          offsetX={minValue}
+          offsetX={transformToPercentage(minValue, fixedValues)}
           bullet={minBullet}
           isOnTop={onTopBullet === minBullet}
           handleMouseDown={handleBulletMouseDown}
         />
         <RangeBullet
           isActive={activeBullet === maxBullet}
-          offsetX={maxValue}
+          offsetX={transformToPercentage(maxValue, fixedValues)}
           bullet={maxBullet}
           isOnTop={onTopBullet === maxBullet}
           handleMouseDown={handleBulletMouseDown}
         />
-        <div className={s.rangeLine} />
+        <div className={`${s.rangeLine} ${isDragging ? s.dragging : ""}`} />
       </div>
       <div className={s.rangeLineExtension} />
       <FixedLabel value={maxValue} isMaxLabel={true} />

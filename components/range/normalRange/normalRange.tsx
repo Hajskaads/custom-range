@@ -10,8 +10,8 @@ const maxBullet: BulletType = "max";
 const NormalRange: React.FC = () => {
   const [min, setMin] = useState<number>(0);
   const [max, setMax] = useState<number>(100);
-  const [minValue, setMinValue] = useState<number>(0);
-  const [maxValue, setMaxValue] = useState<number>(100);
+  const [minValue, setMinValue] = useState<string>("0");
+  const [maxValue, setMaxValue] = useState<string>("100");
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [activeBullet, setActiveBullet] = useState<BulletType | null>(null);
   const [onTopBullet, setOnTopBullet] = useState<BulletType>("max");
@@ -53,24 +53,24 @@ const NormalRange: React.FC = () => {
 
       if (
         activeBullet === minBullet &&
-        newValue !== minValue &&
+        newValue !== +minValue &&
         newValue > min - 50 // If the condition is removed, bullet is re-rendered when it doesn't make sense, and if newValue > min is left, when moving the cursor very quickly, the minimum is not reached.
       ) {
         const newMinValue = +Math.max(
-          Math.min(newValue, maxValue),
+          Math.min(newValue, +maxValue),
           min
         ).toFixed(2);
-        setMinValue(newMinValue);
+        setMinValue(newMinValue.toString());
       } else if (
         activeBullet === maxBullet &&
-        newValue !== maxValue &&
+        newValue !== +maxValue &&
         newValue < max * 1.5 // If the condition is removed, it is re-rendered when it doesn't make sense, and if newValue < max is left without a factor, when moving the cursor very quickly, the maximum is not reached.
       ) {
         const newMaxValue = +Math.min(
-          Math.max(newValue, minValue),
+          Math.max(newValue, +minValue),
           max
         ).toFixed(2);
-        setMaxValue(newMaxValue);
+        setMaxValue(newMaxValue.toString());
       }
     };
 
@@ -88,9 +88,9 @@ const NormalRange: React.FC = () => {
     // setActiveBullet(bullet);
     setOnTopBullet(bullet);
     if (bullet === minBullet) {
-      setMinValue(+newValue);
+      setMinValue(newValue);
     } else if (bullet === maxBullet) {
-      setMaxValue(+newValue);
+      setMaxValue(newValue);
     }
   };
 
@@ -99,32 +99,31 @@ const NormalRange: React.FC = () => {
       <InputLabel
         value={minValue}
         min={min}
-        max={maxValue}
+        max={+maxValue}
         bullet={minBullet}
         handleLabelChange={handleLabelChange}
       />
       <div className={s.container} ref={rangeRef}>
         <RangeBullet
           isActive={activeBullet === minBullet}
-          offsetX={minValue}
+          offsetX={+minValue}
           bullet={minBullet}
           isOnTop={onTopBullet === minBullet}
           handleMouseDown={handleBulletMouseDown}
         />
         <RangeBullet
           isActive={activeBullet === maxBullet}
-          offsetX={maxValue}
+          offsetX={+maxValue}
           bullet={maxBullet}
           isOnTop={onTopBullet === maxBullet}
           handleMouseDown={handleBulletMouseDown}
         />
         <div className={s.rangeLine} />
       </div>
-      <div className={s.rangeLineExtension} />
       <InputLabel
         value={maxValue}
-        min={minValue}
-        max={max}
+        min={+minValue}
+        max={+max}
         bullet={maxBullet}
         handleLabelChange={handleLabelChange}
       />

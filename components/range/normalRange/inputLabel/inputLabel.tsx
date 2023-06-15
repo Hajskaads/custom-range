@@ -4,7 +4,7 @@ import s from "./inputLabel.module.css";
 import { BulletType } from "@lib/types";
 
 interface InputLabelProps {
-  value: number;
+  value: string;
   min: number;
   max: number;
   bullet: BulletType;

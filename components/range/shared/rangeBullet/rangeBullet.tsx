@@ -26,7 +26,7 @@ const RangeBullet: FC<RangeBulletProps> = ({
       className={`${s.bullet} ${isOnTop ? s.onTop : ""} ${
         isActive ? s.onDrag : ""
       }`}
-      style={{ left: `${offsetX}%` }}
+      style={{ left: `calc(${offsetX}% - 0.5rem)` }}
       onMouseDown={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) =>
         handleMouseDown(bullet, e)
       }
