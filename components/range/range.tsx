@@ -18,6 +18,7 @@ const Range: React.FC<RangeProps> = ({ isFixedRange }) => {
   const [maxValue, setMaxValue] = useState<number>(100);
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [activeBullet, setActiveBullet] = useState<BulletType | null>(null);
+  const [onTopBullet, setOnTopBullet] = useState<BulletType>("max");
   const rangeRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -37,6 +38,7 @@ const Range: React.FC<RangeProps> = ({ isFixedRange }) => {
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
   ): void => {
     setActiveBullet(bullet);
+    setOnTopBullet(bullet);
     setIsDragging(true);
   };
 
@@ -92,6 +94,7 @@ const Range: React.FC<RangeProps> = ({ isFixedRange }) => {
   ): void => {
     event.preventDefault();
     setActiveBullet(bullet);
+    setOnTopBullet(bullet);
   };
 
   return (
@@ -102,12 +105,14 @@ const Range: React.FC<RangeProps> = ({ isFixedRange }) => {
           isActive={activeBullet === minBullet}
           offsetX={minValue}
           bullet={minBullet}
+          isOnTop={onTopBullet === minBullet}
           handleMouseDown={handleBulletMouseDown}
         />
         <RangeBullet
           isActive={activeBullet === maxBullet}
           offsetX={maxValue}
           bullet={maxBullet}
+          isOnTop={onTopBullet === maxBullet}
           handleMouseDown={handleBulletMouseDown}
         />
         <div className={s.rangeLine} />

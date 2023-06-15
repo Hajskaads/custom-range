@@ -15,3 +15,7 @@
 .bullet:hover {
   transform: scale(1.2);
 }
+
+.onTop {
+  z-index: 20;
+}
