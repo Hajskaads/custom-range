@@ -1,0 +1,7 @@
+.bullet {
+  transition: all 0.3s ease-in-out;
+}
+
+.bullet:hover {
+  transform: scale(1.2);
+}

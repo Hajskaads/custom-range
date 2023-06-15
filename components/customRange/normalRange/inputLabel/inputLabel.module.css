@@ -1,0 +1,9 @@
+.range-label {
+  position: absolute;
+  height: 4px;
+  width: 4px;
+  z-index: 10;
+  top: -1px;
+  background-color: #808080;
+  border-radius: 9999px;
+}

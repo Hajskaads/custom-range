@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import s from "@styles/main.module.css";
+import s from "./normalRange.module.css";
 
 interface NormalRangeProps {
   isOnHover?: boolean;
@@ -29,7 +29,7 @@ const NormalRange: React.FC<NormalRangeProps> = ({ isOnHover }) => {
   const handleBulletMouseDown = (
     bullet: "min" | "max",
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
-  ) => {
+  ): void => {
     setActiveBullet(bullet);
     setIsDragging(true);
   };
@@ -83,7 +83,7 @@ const NormalRange: React.FC<NormalRangeProps> = ({ isOnHover }) => {
   const handleLabelClick = (
     event: React.MouseEvent<HTMLDivElement>,
     bullet: "min" | "max"
-  ) => {
+  ): void => {
     event.preventDefault();
     setActiveBullet(bullet);
   };
