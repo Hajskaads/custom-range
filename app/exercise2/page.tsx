@@ -1,6 +1,6 @@
 "use client";
 
-import FixedRange from "./fixedRange";
+import FixedRange from "@components/customRange/fixedRange/fixedRange";
 
 export default function Home() {
   return (

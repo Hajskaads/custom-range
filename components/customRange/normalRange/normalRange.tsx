@@ -1,7 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
-import s from "../../styles/main.module.css";
+import s from "@styles/main.module.css";
 
-const NormalRange: React.FC = () => {
+interface NormalRangeProps {
+  isOnHover?: boolean;
+}
+
+const NormalRange: React.FC<NormalRangeProps> = ({ isOnHover }) => {
   const [min, setMin] = useState<number>(0);
   const [max, setMax] = useState<number>(100);
   const [minValue, setMinValue] = useState<number>(0);
@@ -104,7 +108,9 @@ const NormalRange: React.FC = () => {
         <div
           id="bullet-min"
           //   className={`range-bullet`}
-          className={`absolute h-4 w-4 z-10 -top-1 bg-gray-500 rounded-full cursor-grab ${s.bullet}`}
+          className={`absolute h-4 w-4 z-10 -top-1 bg-gray-500 rounded-full cursor-grab ${
+            isOnHover ? s.bullet : ""
+          }`}
           style={{ left: `${minValue}%` }}
           onMouseDown={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) =>
             handleBulletMouseDown("min", e)
@@ -112,7 +118,9 @@ const NormalRange: React.FC = () => {
         ></div>
         <div
           id="bullet-max"
-          className={`absolute h-4 w-4 z-10 -top-1 bg-gray-500 rounded-full cursor-grab ${s.bullet}`}
+          className={`absolute h-4 w-4 z-10 -top-1 bg-gray-500 rounded-full cursor-grab ${
+            isOnHover ? s.bullet : ""
+          }`}
           style={{ left: `${maxValue}%` }}
           onMouseDown={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) =>
             handleBulletMouseDown("max", e)

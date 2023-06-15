@@ -1,7 +1,7 @@
 import { FC } from "react";
 import s from "./rangeBullet.module.css";
 
-interface rangeBulletProps {
+interface RangeBulletProps {
   isActive: boolean;
   offsetX: number;
   handleMouseDown: (
@@ -10,7 +10,7 @@ interface rangeBulletProps {
   ) => void;
 }
 
-const rangeBullet: FC<rangeBulletProps> = ({
+const RangeBullet: FC<RangeBulletProps> = ({
   isActive,
   offsetX,
   handleMouseDown,
@@ -30,4 +30,4 @@ const rangeBullet: FC<rangeBulletProps> = ({
   );
 };
 
-export default rangeBullet;
+export default RangeBullet;

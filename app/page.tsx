@@ -1,6 +1,6 @@
 "use client";
 
-import NormalRange from "./normalRange";
+import NormalRange from "@components/customRange/normalRange/normalRange";
 
 export default function Home() {
   return (
