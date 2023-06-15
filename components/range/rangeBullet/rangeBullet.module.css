@@ -1,0 +1,17 @@
+.bullet {
+  position: absolute;
+  height: 1rem;
+  width: 1rem;
+  z-index: 10;
+  top: -0.25rem;
+  background-color: rgb(107 114 128);
+  border-radius: 9999px;
+  cursor: grab;
+  cursor: -moz-grab;
+  cursor: -webkit-grab;
+  transition: transform 0.3s ease-in-out;
+}
+
+.bullet:hover {
+  transform: scale(1.2);
+}

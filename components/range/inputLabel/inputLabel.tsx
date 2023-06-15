@@ -1,20 +1,26 @@
 import { FC } from "react";
+import m from "@styles/main.module.css";
 import s from "./inputLabel.module.css";
+import { BulletType } from "@lib/types";
 
 interface InputLabelProps {
   value: number;
+  isRightAligned?: boolean;
   handleLabelClick: (
     event: React.MouseEvent<HTMLDivElement>,
-    bullet: "min" | "max"
+    bullet: BulletType
   ) => void;
 }
 
-const InputLabel: FC<InputLabelProps> = ({ value, handleLabelClick }) => {
+const InputLabel: FC<InputLabelProps> = ({
+  value,
+  isRightAligned,
+  handleLabelClick,
+}) => {
   return (
     <div
-      className="range-label whitespace-nowrap"
+      className={`${s.label} ${isRightAligned ? m.rightAligned : ""}`}
       onClick={(e) => handleLabelClick(e, "min")}
-      style={{ minWidth: "4.5rem" }}
     >
       {`${value} €`}
     </div>

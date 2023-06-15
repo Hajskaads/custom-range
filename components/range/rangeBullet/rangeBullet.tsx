@@ -1,30 +1,30 @@
 import { FC } from "react";
 import s from "./rangeBullet.module.css";
+import { BulletType } from "@lib/types";
 
 interface RangeBulletProps {
-  isActive: boolean;
   offsetX: number;
+  bullet: BulletType;
   handleMouseDown: (
-    bullet: "min" | "max",
+    bullet: BulletType,
     e: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => void;
+  isActive?: boolean;
 }
 
 const RangeBullet: FC<RangeBulletProps> = ({
-  isActive,
   offsetX,
+  bullet,
   handleMouseDown,
+  isActive,
 }) => {
   return (
     <div
-      id="bullet-min"
-      //   className={`range-bullet ${activeBullet === "min" ? "active" : ""}`}
-      className={`absolute h-4 w-4 z-10 -top-1 bg-gray-500 rounded-full ${
-        isActive ? "active" : ""
-      }`}
+      id={`bullet-${bullet}`}
+      className={s.bullet}
       style={{ left: `${offsetX}%` }}
       onMouseDown={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) =>
-        handleMouseDown("min", e)
+        handleMouseDown(bullet, e)
       }
     />
   );
