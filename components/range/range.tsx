@@ -3,6 +3,7 @@ import s from "./range.module.css";
 import FixedLabel from "./fixedLabel/fixedLabel";
 import RangeBullet from "./rangeBullet/rangeBullet";
 import { BulletType } from "@lib/types";
+import InputLabel from "./inputLabel/inputLabel";
 
 interface RangeProps {
   isFixedRange?: boolean;
@@ -88,18 +89,29 @@ const Range: React.FC<RangeProps> = ({ isFixedRange }) => {
     };
   }, [isDragging, activeBullet, max, maxValue, min, minValue]);
 
-  const handleLabelClick = (
-    event: React.MouseEvent<HTMLDivElement>,
-    bullet: BulletType
-  ): void => {
-    event.preventDefault();
-    setActiveBullet(bullet);
+  const handleLabelChange = (newValue: string, bullet: BulletType): void => {
+    // setActiveBullet(bullet);
     setOnTopBullet(bullet);
+    if (bullet === minBullet) {
+      setMinValue(+newValue);
+    } else if (bullet === maxBullet) {
+      setMaxValue(+newValue);
+    }
   };
 
   return (
     <div className={s.root}>
-      <FixedLabel value={minValue} />
+      {isFixedRange ? (
+        <InputLabel
+          value={minValue}
+          min={min}
+          max={maxValue}
+          bullet={minBullet}
+          handleLabelChange={handleLabelChange}
+        />
+      ) : (
+        <FixedLabel value={minValue} />
+      )}
       <div className={s.container} ref={rangeRef}>
         <RangeBullet
           isActive={activeBullet === minBullet}
@@ -118,7 +130,17 @@ const Range: React.FC<RangeProps> = ({ isFixedRange }) => {
         <div className={s.rangeLine} />
       </div>
       <div className={s.rangeLineExtension} />
-      <FixedLabel value={maxValue} isMaxLabel={true} />
+      {isFixedRange ? (
+        <InputLabel
+          value={maxValue}
+          min={minValue}
+          max={max}
+          bullet={maxBullet}
+          handleLabelChange={handleLabelChange}
+        />
+      ) : (
+        <FixedLabel value={maxValue} isMaxLabel={true} />
+      )}
     </div>
   );
 };

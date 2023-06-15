@@ -2,7 +2,7 @@ import { FC } from "react";
 import s from "./rangeBullet.module.css";
 import { BulletType } from "@lib/types";
 
-interface RangeBulletProps {
+export interface RangeBulletProps {
   offsetX: number;
   bullet: BulletType;
   isOnTop: boolean;
@@ -23,7 +23,9 @@ const RangeBullet: FC<RangeBulletProps> = ({
   return (
     <div
       id={`bullet-${bullet}`}
-      className={`${s.bullet} ${isOnTop ? s.onTop : ""}`}
+      className={`${s.bullet} ${isOnTop ? s.onTop : ""} ${
+        isActive ? s.onDrag : ""
+      }`}
       style={{ left: `${offsetX}%` }}
       onMouseDown={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) =>
         handleMouseDown(bullet, e)

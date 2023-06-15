@@ -19,3 +19,7 @@
 .onTop {
   z-index: 20;
 }
+
+.onDrag {
+  cursor: grabbing;
+}
