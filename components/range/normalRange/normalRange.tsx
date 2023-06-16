@@ -3,7 +3,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import s from "../range.module.css";
 import m from "@styles/main.module.css";
-import { BulletType, NormalSliderDataResponse } from "@lib/types";
+import {
+  BulletType,
+  NormalSliderDataOrErrorResponse,
+  NormalSliderDataResponse,
+} from "@lib/types";
 import InputLabel from "./inputLabel/inputLabel";
 import RangeBullet from "../shared/rangeBullet/rangeBullet";
 import denormalizeValue from "@lib/denormalizeValue";
@@ -28,14 +32,17 @@ const NormalRange: React.FC = () => {
 
   useEffect(() => {
     async function getRange() {
-      const data: NormalSliderDataResponse = await getNormalSliderRange();
+      const data: NormalSliderDataOrErrorResponse =
+        await getNormalSliderRange();
       //@ts-ignore
       if (data.error) {
         //@ts-ignore
         setError(data.error);
       } else {
+        //@ts-ignore
         const newMin = data.min;
         const newMinNormalized = denormalizeValue(min, max, newMin).toString();
+        //@ts-ignore
         const newMax = data.max;
         const newMaxNormalized = denormalizeValue(min, max, newMax).toString();
         setMin(newMin);

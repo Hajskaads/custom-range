@@ -1,10 +1,10 @@
 import {
-  NormalSliderDataResponse,
   NormalSliderResponse,
   ErrorResponse,
+  NormalSliderDataOrErrorResponse,
 } from "@lib/types";
 
-export default async function getNormalSliderRange(): Promise<NormalSliderDataResponse> {
+export default async function getNormalSliderRange(): Promise<NormalSliderDataOrErrorResponse> {
   const response: Response = await fetch("/api/normal-range", {
     method: "GET",
     cache: "no-store",

@@ -1,16 +1,16 @@
 import {
-  NormalSliderDataResponse,
-  NormalSliderResponse,
   ErrorResponse,
+  FixedSliderDataOrErrorResponse,
+  FixedSliderResponse,
 } from "@lib/types";
 
-export default async function getFixedSliderRange(): Promise<NormalSliderDataResponse> {
+export default async function getFixedSliderRange(): Promise<FixedSliderDataOrErrorResponse> {
   const response: Response = await fetch("/api/fixed-range", {
     method: "GET",
     cache: "no-store",
   });
 
-  const data: NormalSliderResponse = await response.json();
+  const data: FixedSliderResponse = await response.json();
 
   //@ts-ignore
   if (response.status === 200 && data.min && data.max) {
