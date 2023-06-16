@@ -13,7 +13,12 @@ export default async function getFixedSliderRange(): Promise<FixedSliderDataOrEr
   const data: FixedSliderResponse = await response.json();
 
   //@ts-ignore
-  if (response.status === 200 && data.min && data.max) {
+  if (
+    response.status === 200 &&
+    Array.isArray(data) &&
+    data.length > 0 &&
+    data.every((item: number) => typeof item === "number")
+  ) {
     //@ts-ignore
     return data; // Return the valid response directly
   } else {

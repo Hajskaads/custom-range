@@ -3,11 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import s from "../range.module.css";
 import m from "@styles/main.module.css";
-import {
-  BulletType,
-  NormalSliderDataOrErrorResponse,
-  NormalSliderDataResponse,
-} from "@lib/types";
+import { BulletType, NormalSliderDataOrErrorResponse } from "@lib/types";
 import InputLabel from "./inputLabel/inputLabel";
 import RangeBullet from "../shared/rangeBullet/rangeBullet";
 import denormalizeValue from "@lib/denormalizeValue";
@@ -16,12 +12,14 @@ import getNormalSliderRange from "@services/getNormalSliderRange";
 
 const minBullet: BulletType = "min";
 const maxBullet: BulletType = "max";
+const initialMin: number = 0;
+const initialMax: number = 100;
 
 const NormalRange: React.FC = () => {
-  const [min, setMin] = useState<number>(0);
-  const [max, setMax] = useState<number>(100);
-  const [minValue, setMinValue] = useState<number>(0);
-  const [maxValue, setMaxValue] = useState<number>(100);
+  const [min, setMin] = useState<number>(initialMin);
+  const [max, setMax] = useState<number>(initialMax);
+  const [minValue, setMinValue] = useState<number>(initialMin);
+  const [maxValue, setMaxValue] = useState<number>(initialMax);
   const [minLabelValue, setMinLabelValue] = useState<string>("0");
   const [maxLabelValue, setMaxLabelValue] = useState<string>("100");
   const [error, setError] = useState<string>("");
@@ -41,14 +39,22 @@ const NormalRange: React.FC = () => {
       } else {
         //@ts-ignore
         const newMin = data.min;
-        const newMinNormalized = denormalizeValue(min, max, newMin).toString();
+        const newMinDenormalized = denormalizeValue(
+          min,
+          max,
+          newMin
+        ).toString();
         //@ts-ignore
         const newMax = data.max;
-        const newMaxNormalized = denormalizeValue(min, max, newMax).toString();
+        const newMaxDenormalized = denormalizeValue(
+          min,
+          max,
+          newMax
+        ).toString();
         setMin(newMin);
-        setMinLabelValue(newMinNormalized);
+        setMinLabelValue(newMinDenormalized);
         setMax(newMax);
-        setMaxLabelValue(newMaxNormalized);
+        setMaxLabelValue(newMaxDenormalized);
       }
     }
     const handleMouseUp = () => {
@@ -81,11 +87,7 @@ const NormalRange: React.FC = () => {
       const offsetX = event.clientX - range.left;
       const newValue = (offsetX / rangeWidth) * 100;
 
-      if (
-        activeBullet === minBullet &&
-        newValue !== +minValue //&&
-        // newValue > min - 50 // If the condition is removed, bullet is re-rendered when it doesn't make sense, and if newValue > min is left, when moving the cursor very quickly, the minimum is not reached.
-      ) {
+      if (activeBullet === minBullet && newValue !== +minValue) {
         const newMinValue = +Math.max(Math.min(newValue, maxValue), 0).toFixed(
           2
         );
@@ -96,11 +98,7 @@ const NormalRange: React.FC = () => {
           +minValue
         ).toFixed(0);
         setMinLabelValue(newMinLabelValue);
-      } else if (
-        activeBullet === maxBullet &&
-        newValue !== +maxValue //&&
-        // newValue < max * 1.5 // If the condition is removed, it is re-rendered when it doesn't make sense, and if newValue < max is left without a factor, when moving the cursor very quickly, the maximum is not reached.
-      ) {
+      } else if (activeBullet === maxBullet && newValue !== +maxValue) {
         const newMaxValue = +Math.min(
           Math.max(newValue, minValue),
           100
