@@ -1,4 +1,11 @@
+import { Metadata } from "next";
 import Range from "@components/range/range";
+
+export const metadata: Metadata = {
+  title: "Interactive Fixed Custom Slider | Demo",
+  description:
+    "Explore this interactive range fixed custom slider for a seamless user experience. Easily adjust values by dragging min and max bullets with this intuitive slider component. SEO ready and developed with accessibility in mind.",
+};
 
 export default function Home() {
   return (

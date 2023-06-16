@@ -67,6 +67,8 @@ const InputLabel: FC<InputLabelProps> = ({
         className={`${s.root} ${bullet === "max" ? s.rightRoot : s.leftRoot}`}
       >
         <input
+          id={`label-input-${bullet}`}
+          aria-label="Enter a number"
           className={s.label}
           type="text"
           pattern={`^\d{0,${max.toString().length}}([.,]\d{1,2})?$`}
