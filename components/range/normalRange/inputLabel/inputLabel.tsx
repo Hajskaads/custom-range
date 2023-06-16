@@ -1,5 +1,4 @@
 import { FC } from "react";
-import m from "@styles/main.module.css";
 import s from "./inputLabel.module.css";
 import { BulletType } from "@lib/types";
 
@@ -8,13 +7,12 @@ interface InputLabelProps {
   min: number;
   max: number;
   bullet: BulletType;
-  handleLabelChange: (newValue: string, bullet: BulletType) => void;
+  handleLabelChange: (
+    newValue: string,
+    bullet: BulletType,
+    isError?: boolean
+  ) => void;
 }
-
-// Helper function to check if a number has decimal values
-const hasDecimalValues = (number: number) => {
-  return Math.floor(number) !== number;
-};
 
 const InputLabel: FC<InputLabelProps> = ({
   value,
@@ -23,48 +21,43 @@ const InputLabel: FC<InputLabelProps> = ({
   bullet,
   handleLabelChange,
 }) => {
-  const [input, setInput] = useState("");
   const [error, setError] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
+    const testRegex = new RegExp(
+      `^[\\d]{0,${max.toString().length}}(\\.\\d{0,3})?$`
+    );
+
+    const newLabelValue = inputValue.replace(",", ".");
+    const numericValue = parseFloat(newLabelValue.replace(",", "."));
+
     let newError = "";
     let newValue = "";
-    // if (/^[\d]{0,5}(\.\d{0,3})?$/.test(newValue)) {
-    //   setValue(newValue);
-    // }
 
-    // if (value === "0." || value === ".") {
-    //   // value.toString().slice(-1) === '.' ? value : +value
-    //   setTonFacturaLuz("0.");
-    //   setKgCo2FacturaLuz(0);
-    // } else {
-    //   kgFacturaLuz = +value * 1000;
-    //   setTonFacturaLuz(value.indexOf(".") > -1 ? value : +value);
-    // }
-    if (inputValue === "") {
-      newValue = "0";
-      // Test if the value is a decimal value where the decimal separator is "." or ","
-    } else if (!/^[\d]{0,3}(\.\d{0,3})?$/.test(inputValue)) {
+    console.log("max", max);
+
+    // Test if the value is a decimal value where the decimal separator is "." or ","
+    if (!testRegex.test(newLabelValue)) {
       newError = "Invalid input";
     } else {
-      const numericValue = parseFloat(inputValue.replace(",", "."));
-      if (inputValue === ".") {
-        newValue = "0";
-      } else if (isNaN(numericValue)) {
+      if (isNaN(numericValue)) {
         newError = "Invalid input";
       } else if (numericValue < min) {
         newError = `Value should be greater than or equal to ${min}`;
       } else if (numericValue > max) {
         newError = `Value should be less than or equal to ${max}`;
       } else {
-        // If the number is decimal, round it to 2 decimal digits
-        newValue = hasDecimalValues(numericValue)
-          ? numericValue.toFixed(2)
-          : numericValue.toString();
       }
     }
-    handleLabelChange(newValue, bullet);
+    // If the number has more than two decimals, round it to 2 decimal digits
+    if (/^\d+\.\d{3,}$/.test(newLabelValue)) {
+      newValue = numericValue.toFixed(2);
+    } else {
+      newValue = newLabelValue;
+    }
+
+    handleLabelChange(newValue, bullet, !!newError);
     setError(newError);
   };
 
@@ -73,16 +66,10 @@ const InputLabel: FC<InputLabelProps> = ({
       <div
         className={`${s.root} ${bullet === "max" ? s.rightRoot : s.leftRoot}`}
       >
-        {/* <div
-        className={`${s.label} ${isRightAligned ? m.rightAligned : ""}`}
-        onClick={(e) => handleLabelClick(e, "min")}
-        >
-        {`${value} €`}
-      </div> */}
         <input
           className={s.label}
           type="text"
-          pattern="^\d{0,3}(\.\d{1,2})?$"
+          pattern={`^\d{0,${max.toString().length}}([.,]\d{1,2})?$`}
           value={value}
           onChange={handleChange}
         />
@@ -100,42 +87,3 @@ const InputLabel: FC<InputLabelProps> = ({
 export default InputLabel;
 
 import React, { useState } from "react";
-
-// const NumberInput = ({ min, max }) => {
-//   const [value, setValue] = useState("");
-//   const [error, setError] = useState("");
-
-//   const handleChange = (e) => {
-//     const inputValue = e.target.value;
-//     setValue(inputValue);
-
-//     if (inputValue !== "") {
-//       const numericValue = parseFloat(inputValue);
-//       if (isNaN(numericValue)) {
-//         setError("Invalid input");
-//       } else if (numericValue < min || numericValue > max) {
-//         setError(`Value should be between ${min} and ${max}`);
-//       } else {
-//         setError("");
-//       }
-//     } else {
-//       setError("");
-//     }
-//   };
-
-//   return (
-//     <div>
-//       <input type="number" value={value} onChange={handleChange} />
-//       {error && <p>{error}</p>}
-//     </div>
-//   );
-// };
-
-// Usage:
-// const MyComponent = () => {
-//   return (
-//     <div>
-//       <NumberInput min={0} max={100} />
-//     </div>
-//   );
-// };

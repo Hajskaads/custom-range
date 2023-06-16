@@ -6,6 +6,7 @@ import { BulletType } from "@lib/types";
 import InputLabel from "./inputLabel/inputLabel";
 import RangeBullet from "../shared/rangeBullet/rangeBullet";
 import denormalizeValue from "@lib/denormalizeValue";
+import normalizeValue from "@lib/normalizeValue";
 
 const minBullet: BulletType = "min";
 const maxBullet: BulletType = "max";
@@ -13,8 +14,8 @@ const maxBullet: BulletType = "max";
 const NormalRange: React.FC = () => {
   const [min, setMin] = useState<number>(10);
   const [max, setMax] = useState<number>(70);
-  const [minValue, setMinValue] = useState<number>(10);
-  const [maxValue, setMaxValue] = useState<number>(70);
+  const [minValue, setMinValue] = useState<number>(0);
+  const [maxValue, setMaxValue] = useState<number>(100);
   const [minLabelValue, setMinLabelValue] = useState<string>("10");
   const [maxLabelValue, setMaxLabelValue] = useState<string>("70");
   const [isDragging, setIsDragging] = useState<boolean>(false);
@@ -51,13 +52,6 @@ const NormalRange: React.FC = () => {
       const rangeWidth = range.width;
       const offsetX = event.clientX - range.left;
       const newValue = (offsetX / rangeWidth) * 100;
-
-      console.log("newValue", newValue);
-      console.log(
-        "normalizeValue(min, max, newValue)",
-        denormalizeValue(min, max, newValue)
-      );
-      console.log("\n");
 
       if (
         activeBullet === minBullet &&
@@ -103,13 +97,22 @@ const NormalRange: React.FC = () => {
     };
   }, [isDragging, activeBullet, max, maxValue, min, minValue]);
 
-  const handleLabelChange = (newValue: string, bullet: BulletType): void => {
-    // setActiveBullet(bullet);
+  const handleLabelChange = (
+    newValue: string,
+    bullet: BulletType,
+    isError?: boolean
+  ): void => {
     setOnTopBullet(bullet);
     if (bullet === minBullet) {
-      setMinValue(+newValue);
+      setMinLabelValue(newValue);
+      if (!isError) {
+        setMinValue(normalizeValue(min, max, +newValue));
+      }
     } else if (bullet === maxBullet) {
-      setMaxValue(+newValue);
+      setMaxLabelValue(newValue);
+      if (!isError) {
+        setMaxValue(normalizeValue(min, max, +newValue));
+      }
     }
   };
 
@@ -118,7 +121,7 @@ const NormalRange: React.FC = () => {
       <InputLabel
         value={minLabelValue}
         min={min}
-        max={+maxValue}
+        max={+maxLabelValue}
         bullet={minBullet}
         handleLabelChange={handleLabelChange}
       />
@@ -132,7 +135,7 @@ const NormalRange: React.FC = () => {
         />
         <RangeBullet
           isActive={activeBullet === maxBullet}
-          offsetX={+maxValue}
+          offsetX={maxValue}
           bullet={maxBullet}
           isOnTop={onTopBullet === maxBullet}
           handleMouseDown={handleBulletMouseDown}
@@ -141,8 +144,8 @@ const NormalRange: React.FC = () => {
       </div>
       <InputLabel
         value={maxLabelValue}
-        min={+minValue}
-        max={+max}
+        min={+minLabelValue}
+        max={max}
         bullet={maxBullet}
         handleLabelChange={handleLabelChange}
       />
