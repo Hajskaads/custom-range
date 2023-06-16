@@ -3,13 +3,14 @@ export type Error = {
   status: number;
   message: string;
 };
-export type DataResponse = {
+export type NormalSliderDataResponse = {
   min: number;
   max: number;
-  error?: string;
 };
 export type ErrorResponse = {
   error: string;
 };
-export type NormalSliderResponse = DataResponse | Error;
-export type NormalSliderDataResponse = DataResponse | ErrorResponse;
+export type NormalSliderResponse = NormalSliderDataResponse | Error;
+export type NormalSliderDataOrErrorResponse =
+  | NormalSliderDataResponse
+  | ErrorResponse;

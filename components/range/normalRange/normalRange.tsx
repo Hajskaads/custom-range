@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import s from "../range.module.css";
+import m from "@styles/main.module.css";
 import { BulletType, NormalSliderDataResponse } from "@lib/types";
 import InputLabel from "./inputLabel/inputLabel";
 import RangeBullet from "../shared/rangeBullet/rangeBullet";
@@ -28,13 +29,13 @@ const NormalRange: React.FC = () => {
   useEffect(() => {
     async function getRange() {
       const data: NormalSliderDataResponse = await getNormalSliderRange();
+      //@ts-ignore
       if (data.error) {
+        //@ts-ignore
         setError(data.error);
       } else {
-        //@ts-ignore
         const newMin = data.min;
         const newMinNormalized = denormalizeValue(min, max, newMin).toString();
-        //@ts-ignore
         const newMax = data.max;
         const newMaxNormalized = denormalizeValue(min, max, newMax).toString();
         setMin(newMin);
@@ -135,6 +136,10 @@ const NormalRange: React.FC = () => {
       }
     }
   };
+
+  if (error) {
+    return <div className={`${s.root} ${m.centerAligned}`}>{error}</div>;
+  }
 
   return (
     <div className={s.root}>

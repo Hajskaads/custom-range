@@ -1,4 +1,4 @@
-import { DataResponse } from "@lib/types";
+import { NormalSliderDataResponse } from "@lib/types";
 import { NextResponse } from "next/server";
 
 /**
@@ -7,15 +7,11 @@ import { NextResponse } from "next/server";
  * @returns {Promise<NextResponse>} - A promise that resolves to the response object.
  */
 export async function GET(): Promise<NextResponse> {
-  const data: DataResponse = {
+  const data: NormalSliderDataResponse = {
     min: 10,
     max: 70,
   };
   try {
-    // return NextResponse.json({
-    //   status: 500,
-    //   message: "Something went wrong",
-    // });
     return NextResponse.json(data, { status: 200 });
   } catch (e: any) {
     // Handle error
