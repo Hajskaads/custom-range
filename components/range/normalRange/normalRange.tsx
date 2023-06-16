@@ -5,15 +5,18 @@ import s from "../range.module.css";
 import { BulletType } from "@lib/types";
 import InputLabel from "./inputLabel/inputLabel";
 import RangeBullet from "../shared/rangeBullet/rangeBullet";
+import denormalizeValue from "@lib/denormalizeValue";
 
 const minBullet: BulletType = "min";
 const maxBullet: BulletType = "max";
 
 const NormalRange: React.FC = () => {
-  const [min, setMin] = useState<number>(0);
-  const [max, setMax] = useState<number>(100);
-  const [minValue, setMinValue] = useState<string>("0");
-  const [maxValue, setMaxValue] = useState<string>("100");
+  const [min, setMin] = useState<number>(10);
+  const [max, setMax] = useState<number>(70);
+  const [minValue, setMinValue] = useState<number>(10);
+  const [maxValue, setMaxValue] = useState<number>(70);
+  const [minLabelValue, setMinLabelValue] = useState<string>("10");
+  const [maxLabelValue, setMaxLabelValue] = useState<string>("70");
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [activeBullet, setActiveBullet] = useState<BulletType | null>(null);
   const [onTopBullet, setOnTopBullet] = useState<BulletType>("max");
@@ -47,32 +50,46 @@ const NormalRange: React.FC = () => {
       const range = rangeRef.current.getBoundingClientRect();
       const rangeWidth = range.width;
       const offsetX = event.clientX - range.left;
+      const newValue = (offsetX / rangeWidth) * 100;
 
-      const bulletWidth = 16; // Width of the bullet in px (adjust if needed)
-      const centerOffset = bulletWidth / 2;
-      const centeredOffsetX = offsetX - centerOffset;
-      const newValue = (centeredOffsetX / rangeWidth) * 100;
+      console.log("newValue", newValue);
+      console.log(
+        "normalizeValue(min, max, newValue)",
+        denormalizeValue(min, max, newValue)
+      );
+      console.log("\n");
 
       if (
         activeBullet === minBullet &&
         newValue !== +minValue &&
         newValue > min - 50 // If the condition is removed, bullet is re-rendered when it doesn't make sense, and if newValue > min is left, when moving the cursor very quickly, the minimum is not reached.
       ) {
-        const newMinValue = +Math.max(
-          Math.min(newValue, +maxValue),
-          min
-        ).toFixed(2);
-        setMinValue(newMinValue.toString());
+        const newMinValue = +Math.max(Math.min(newValue, maxValue), 0).toFixed(
+          2
+        );
+        setMinValue(newMinValue);
+        const newMinLabelValue: string = denormalizeValue(
+          min,
+          max,
+          +minValue
+        ).toFixed(0);
+        setMinLabelValue(newMinLabelValue);
       } else if (
         activeBullet === maxBullet &&
         newValue !== +maxValue &&
         newValue < max * 1.5 // If the condition is removed, it is re-rendered when it doesn't make sense, and if newValue < max is left without a factor, when moving the cursor very quickly, the maximum is not reached.
       ) {
         const newMaxValue = +Math.min(
-          Math.max(newValue, +minValue),
-          max
+          Math.max(newValue, minValue),
+          100
         ).toFixed(2);
-        setMaxValue(newMaxValue.toString());
+        setMaxValue(newMaxValue);
+        const newMaxLabelValue: string = denormalizeValue(
+          min,
+          max,
+          +maxValue
+        ).toFixed(0);
+        setMaxLabelValue(newMaxLabelValue);
       }
     };
 
@@ -90,16 +107,16 @@ const NormalRange: React.FC = () => {
     // setActiveBullet(bullet);
     setOnTopBullet(bullet);
     if (bullet === minBullet) {
-      setMinValue(newValue);
+      setMinValue(+newValue);
     } else if (bullet === maxBullet) {
-      setMaxValue(newValue);
+      setMaxValue(+newValue);
     }
   };
 
   return (
     <div className={s.root}>
       <InputLabel
-        value={minValue}
+        value={minLabelValue}
         min={min}
         max={+maxValue}
         bullet={minBullet}
@@ -123,7 +140,7 @@ const NormalRange: React.FC = () => {
         <div className={s.rangeLine} />
       </div>
       <InputLabel
-        value={maxValue}
+        value={maxLabelValue}
         min={+minValue}
         max={+max}
         bullet={maxBullet}

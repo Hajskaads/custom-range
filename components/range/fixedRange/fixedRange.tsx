@@ -5,7 +5,7 @@ import s from "../range.module.css";
 import FixedLabel from "./fixedLabel/fixedLabel";
 import RangeBullet from "../shared/rangeBullet/rangeBullet";
 import { BulletType } from "@lib/types";
-import normalizeValue from "@lib/normalizeValue";
+import normalizeValue from "@lib/denormalizeValue";
 import transformToPercentage from "@lib/transformToPercentage";
 import findClosestValue from "@lib/findClosestValue";
 
@@ -53,32 +53,13 @@ const FixedRange: React.FC = () => {
       const range = rangeRef.current.getBoundingClientRect();
       const rangeWidth = range.width;
       const offsetX = event.clientX - range.left;
-
-      const bulletWidth = 16; // Width of the bullet in px (adjust if needed)
-      const centerOffset = bulletWidth / 2;
-      const centeredOffsetX = offsetX - centerOffset;
-      const newValue = (centeredOffsetX / rangeWidth) * 100;
+      const newValue = (offsetX / rangeWidth) * 100;
 
       if (
         activeBullet === minBullet &&
         newValue !== minValue &&
         newValue > Math.min(...fixedValues) - 50 // If the condition is removed, bullet is re-rendered when it doesn't make sense, and if newValue > min is left, when moving the cursor very quickly, the minimum is not reached.
       ) {
-        console.log("fixedValues", fixedValues);
-        console.log("newValue", newValue);
-        console.log("min", min);
-        console.log("max", max);
-        console.log("normalizeValue", normalizeValue(min, max, newValue));
-        console.log(
-          "findClosestValue",
-          findClosestValue(
-            normalizeValue(min, max, newValue),
-            fixedValues,
-            false
-          )
-        );
-        console.log("\n");
-
         const newMinValue = +Math.max(
           Math.min(
             findClosestValue(
@@ -86,7 +67,6 @@ const FixedRange: React.FC = () => {
               fixedValues,
               false
             ),
-            // normalizeValue(minValue, maxValue, newValue)
             maxValue
           ),
           min
@@ -99,7 +79,6 @@ const FixedRange: React.FC = () => {
         newValue !== maxValue &&
         newValue < Math.max(...fixedValues) * 1.5 // If the condition is removed, it is re-rendered when it doesn't make sense, and if newValue < max is left without a factor, when moving the cursor very quickly, the maximum is not reached.
       ) {
-        console.log("newValue", newValue);
         const newMaxValue = +Math.min(
           Math.max(
             findClosestValue(
