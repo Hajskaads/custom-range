@@ -1,9 +1,5 @@
+import { DataResponse } from "@lib/types";
 import { NextResponse } from "next/server";
-
-interface DataResponse {
-  min: number;
-  max: number;
-}
 
 /**
  * GET endpoint to fetch the range of the slider.
@@ -12,13 +8,20 @@ interface DataResponse {
  */
 export async function GET(): Promise<NextResponse> {
   const data: DataResponse = {
-    min: 1,
-    max: 100,
+    min: 10,
+    max: 70,
   };
   try {
+    // return NextResponse.json({
+    //   status: 500,
+    //   message: "Something went wrong",
+    // });
     return NextResponse.json(data, { status: 200 });
   } catch (e: any) {
     // Handle error
-    return NextResponse.json({ status: 500, message: "Something went wrong" });
+    return NextResponse.json({
+      status: 500,
+      message: "Something went wrong",
+    });
   }
 }

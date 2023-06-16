@@ -4,7 +4,7 @@ import Range from "@components/range/range";
 export const metadata: Metadata = {
   title: "Interactive Custom Slider | Demo",
   description:
-    "Explore this interactive custom slider for a seamless user experience. Easily adjust values and drag min and max values with this intuitive slider component. SEO ready and accessibility in mind.",
+    "Explore this interactive custom slider for a seamless user experience. Easily adjust values and drag min and max values with this intuitive slider component. SEO ready and developed with accessibility in mind.",
 };
 
 export default function Home() {
