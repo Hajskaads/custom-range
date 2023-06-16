@@ -1,5 +1,3 @@
-"use client";
-
 import Range from "@components/range/range";
 
 export default function Home() {

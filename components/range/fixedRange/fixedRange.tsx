@@ -1,84 +1,20 @@
+"use client";
+
 import React, { useState, useRef, useEffect } from "react";
 import s from "../range.module.css";
 import FixedLabel from "./fixedLabel/fixedLabel";
 import RangeBullet from "../shared/rangeBullet/rangeBullet";
 import { BulletType } from "@lib/types";
+import normalizeValue from "@lib/normalizeValue";
+import transformToPercentage from "@lib/transformToPercentage";
+import findClosestValue from "@lib/findClosestValue";
 
 const minBullet: BulletType = "min";
 const maxBullet: BulletType = "max";
 
-/**
- * Finds the value in the given array that is closest to the target number.
- * If the target number is exactly between two values, it returns the highest or lowest value based on the isMax flag.
- *
- * @param {number[]} numbers - Array of numbers to search.
- * @param {number} target - Target number.
- * @param {boolean} isMax - Flag indicating whether to return the highest or lowest value when equidistant.
- * @returns {number} - The value in the array that is closest to the target number.
- */
-function findClosestValue(
-  target: number,
-  numbers: number[],
-  isMax: boolean
-): number {
-  let closestValue = numbers[0];
-
-  // Iterate over the numbers array
-  for (let i = 1; i < numbers.length; i++) {
-    const currentNumber = numbers[i];
-
-    // Check if the absolute difference between the current number and target is smaller than the closest difference so far
-    if (Math.abs(currentNumber - target) < Math.abs(closestValue - target)) {
-      closestValue = currentNumber;
-    } else if (
-      Math.abs(currentNumber - target) === Math.abs(closestValue - target)
-    ) {
-      // Check if the numbers are equidistant from the target
-      if (isMax) {
-        closestValue = Math.max(currentNumber, closestValue);
-      } else {
-        closestValue = Math.min(currentNumber, closestValue);
-      }
-    }
-  }
-
-  return closestValue;
-}
-
-/**
- * Transforms a given number from an array to a percentage based on the minimum and maximum values of the array.
- * @param {number} number - The input number to be transformed.
- * @param {number[]} array - The array of numbers.
- * @returns {number} - The percentage value corresponding to the input number.
- */
-function transformToPercentage(number: number, array: number[]) {
-  const minValue = Math.min(...array);
-  const maxValue = Math.max(...array);
-
-  const percentage = ((number - minValue) / (maxValue - minValue)) * 100;
-  return percentage;
-}
-
-/**
- * Transforms an array of numbers to a percentage scale based on the minimum and maximum values.
- * @param {number[]} array - The array of numbers.
- * @returns {number[]} - The array of numbers transformed to a percentage scale.
- */
-function transformArrayToPercentage(array: number[]) {
-  // Find the minimum and maximum values in the array
-  const minValue = Math.min(...array);
-  const maxValue = Math.max(...array);
-
-  // Calculate the percentage for each number in the array
-  const percentageArray = array.map((number) => {
-    return ((number - minValue) / (maxValue - minValue)) * 100;
-  });
-
-  // Return the array of numbers transformed to a percentage scale
-  return percentageArray;
-}
-
 const FixedRange: React.FC = () => {
+  const [min, setMin] = useState<number>(1.99);
+  const [max, setMax] = useState<number>(70.99);
   const [minValue, setMinValue] = useState<number>(1.99);
   const [maxValue, setMaxValue] = useState<number>(70.99);
   const [fixedValues, setFixedValues] = useState<number[]>([
@@ -88,9 +24,6 @@ const FixedRange: React.FC = () => {
   const [activeBullet, setActiveBullet] = useState<BulletType | null>(null);
   const [onTopBullet, setOnTopBullet] = useState<BulletType>("max");
   const rangeRef = useRef<HTMLDivElement | null>(null);
-
-  const fixedValuesToPercentage: number[] =
-    transformArrayToPercentage(fixedValues);
 
   useEffect(() => {
     const handleMouseUp = () => {
@@ -131,27 +64,56 @@ const FixedRange: React.FC = () => {
         newValue !== minValue &&
         newValue > Math.min(...fixedValues) - 50 // If the condition is removed, bullet is re-rendered when it doesn't make sense, and if newValue > min is left, when moving the cursor very quickly, the minimum is not reached.
       ) {
+        console.log("fixedValues", fixedValues);
+        console.log("newValue", newValue);
+        console.log("min", min);
+        console.log("max", max);
+        console.log("normalizeValue", normalizeValue(min, max, newValue));
+        console.log(
+          "findClosestValue",
+          findClosestValue(
+            normalizeValue(min, max, newValue),
+            fixedValues,
+            false
+          )
+        );
+        console.log("\n");
+
         const newMinValue = +Math.max(
           Math.min(
-            findClosestValue(newValue, fixedValuesToPercentage, false),
+            findClosestValue(
+              normalizeValue(min, max, newValue),
+              fixedValues,
+              false
+            ),
+            // normalizeValue(minValue, maxValue, newValue)
             maxValue
           ),
-          Math.min(...fixedValues)
+          min
         ).toFixed(2);
-        setMinValue(newMinValue);
+        if (newMinValue !== minValue) {
+          setMinValue(newMinValue);
+        }
       } else if (
         activeBullet === maxBullet &&
         newValue !== maxValue &&
         newValue < Math.max(...fixedValues) * 1.5 // If the condition is removed, it is re-rendered when it doesn't make sense, and if newValue < max is left without a factor, when moving the cursor very quickly, the maximum is not reached.
       ) {
+        console.log("newValue", newValue);
         const newMaxValue = +Math.min(
           Math.max(
-            findClosestValue(newValue, fixedValuesToPercentage, true),
+            findClosestValue(
+              normalizeValue(min, max, newValue),
+              fixedValues,
+              true
+            ),
             minValue
           ),
-          Math.max(...fixedValues)
+          max
         ).toFixed(2);
-        setMaxValue(newMaxValue);
+        if (newMaxValue !== minValue) {
+          setMaxValue(newMaxValue);
+        }
       }
     };
 

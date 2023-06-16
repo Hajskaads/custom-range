@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useRef, useEffect } from "react";
 import s from "../range.module.css";
 import { BulletType } from "@lib/types";
