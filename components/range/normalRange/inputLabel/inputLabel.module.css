@@ -8,10 +8,12 @@
 }
 
 .label {
+  background-color: inherit;
   white-space: nowrap;
   width: 100%;
   border-width: 1px;
   border-radius: 0.375rem;
+  border-color: rgb(88, 96, 100);
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
   padding-left: 0.5rem;

@@ -4,21 +4,27 @@ import React, { useState, useRef, useEffect } from "react";
 import s from "../range.module.css";
 import FixedLabel from "./fixedLabel/fixedLabel";
 import RangeBullet from "../shared/rangeBullet/rangeBullet";
-import { BulletType } from "@lib/types";
-import normalizeValue from "@lib/denormalizeValue";
-import transformToPercentage from "@lib/transformToPercentage";
+import { BulletType, FixedSliderDataOrErrorResponse } from "@lib/types";
+import normalizeValue from "@lib/normalizeValue";
+import denormalizeValue from "@lib/denormalizeValue";
 import findClosestValue from "@lib/findClosestValue";
+import getFixedSliderRange from "@services/getFixedSliderRange";
 
 const minBullet: BulletType = "min";
 const maxBullet: BulletType = "max";
+const initialMin: number = 0;
+const initialMax: number = 100;
 
 const FixedRange: React.FC = () => {
-  const [min, setMin] = useState<number>(1.99);
-  const [max, setMax] = useState<number>(70.99);
-  const [minValue, setMinValue] = useState<number>(1.99);
-  const [maxValue, setMaxValue] = useState<number>(70.99);
+  const [min, setMin] = useState<number>(initialMin);
+  const [max, setMax] = useState<number>(initialMax);
+  const [minValue, setMinValue] = useState<number>(initialMin);
+  const [maxValue, setMaxValue] = useState<number>(initialMax);
+  const [minNormalizedValue, setMinNormalizedValue] = useState<number>(0);
+  const [maxNormalizedValue, setMaxNormalizedValue] = useState<number>(100);
   const [fixedValues, setFixedValues] = useState<number[]>([
-    1.99, 5.99, 10.99, 30.99, 50.99, 70.99,
+    initialMin,
+    initialMax,
   ]);
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [activeBullet, setActiveBullet] = useState<BulletType | null>(null);
@@ -26,11 +32,31 @@ const FixedRange: React.FC = () => {
   const rangeRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    async function getRange() {
+      const data: FixedSliderDataOrErrorResponse = await getFixedSliderRange();
+      //@ts-ignore
+      if (data.error) {
+        //@ts-ignore
+        setError(data.error);
+      } else {
+        //@ts-ignore
+        const newMin = Math.min(...data);
+        //@ts-ignore
+        const newMax = Math.max(...data);
+        //@ts-ignore
+        setFixedValues(data);
+        setMin(newMin);
+        setMax(newMax);
+        setMinValue(newMin);
+        setMaxValue(newMax);
+      }
+    }
     const handleMouseUp = () => {
       setIsDragging(false);
       setActiveBullet(null);
     };
 
+    getRange();
     document.addEventListener("mouseup", handleMouseUp);
     return () => {
       document.removeEventListener("mouseup", handleMouseUp);
@@ -63,7 +89,7 @@ const FixedRange: React.FC = () => {
         const newMinValue = +Math.max(
           Math.min(
             findClosestValue(
-              normalizeValue(min, max, newValue),
+              denormalizeValue(min, max, newValue),
               fixedValues,
               false
             ),
@@ -72,7 +98,9 @@ const FixedRange: React.FC = () => {
           min
         ).toFixed(2);
         if (newMinValue !== minValue) {
+          const newMinNormalized = normalizeValue(min, max, newMinValue);
           setMinValue(newMinValue);
+          setMinNormalizedValue(newMinNormalized);
         }
       } else if (
         activeBullet === maxBullet &&
@@ -82,7 +110,7 @@ const FixedRange: React.FC = () => {
         const newMaxValue = +Math.min(
           Math.max(
             findClosestValue(
-              normalizeValue(min, max, newValue),
+              denormalizeValue(min, max, newValue),
               fixedValues,
               true
             ),
@@ -90,8 +118,10 @@ const FixedRange: React.FC = () => {
           ),
           max
         ).toFixed(2);
-        if (newMaxValue !== minValue) {
+        if (newMaxValue !== maxValue) {
+          const newMaxNormalized = normalizeValue(min, max, newMaxValue);
           setMaxValue(newMaxValue);
+          setMaxNormalizedValue(newMaxNormalized);
         }
       }
     };
@@ -112,21 +142,20 @@ const FixedRange: React.FC = () => {
       <div className={s.container} ref={rangeRef}>
         <RangeBullet
           isActive={activeBullet === minBullet}
-          offsetX={transformToPercentage(minValue, fixedValues)}
+          offsetX={minNormalizedValue}
           bullet={minBullet}
           isOnTop={onTopBullet === minBullet}
           handleMouseDown={handleBulletMouseDown}
         />
         <RangeBullet
           isActive={activeBullet === maxBullet}
-          offsetX={transformToPercentage(maxValue, fixedValues)}
+          offsetX={maxNormalizedValue}
           bullet={maxBullet}
           isOnTop={onTopBullet === maxBullet}
           handleMouseDown={handleBulletMouseDown}
         />
         <div className={`${s.rangeLine} ${isDragging ? s.dragging : ""}`} />
       </div>
-      <div className={s.rangeLineExtension} />
       <FixedLabel value={maxValue} isMaxLabel={true} />
     </div>
   );
