@@ -11,17 +11,3 @@
   position: relative;
   cursor: pointer;
 }
-
-.rangeLine {
-  background-color: rgb(88, 96, 100);
-  width: 100%;
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 0.5rem;
-  border-radius: 9999px;
-}
-
-.dragging {
-  cursor: grabbing;
-}

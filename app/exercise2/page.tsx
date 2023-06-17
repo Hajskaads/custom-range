@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import Range from "@components/range/range";
+import Range from "@components/range";
 
 export const metadata: Metadata = {
   title: "Interactive Fixed Custom Slider | Demo",

@@ -2,8 +2,9 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import s from "../range.module.css";
-import FixedLabel from "./fixedLabel/fixedLabel";
-import RangeBullet from "../shared/rangeBullet/rangeBullet";
+import FixedLabel from "./fixedLabel";
+import RangeBullet from "../shared/rangeBullet";
+import RangeLine from "../shared/rangeLine";
 import { BulletType, FixedSliderDataOrErrorResponse } from "@lib/types";
 import normalizeValue from "@lib/normalizeValue";
 import denormalizeValue from "@lib/denormalizeValue";
@@ -154,7 +155,7 @@ const FixedRange: React.FC = () => {
           isOnTop={onTopBullet === maxBullet}
           handleMouseDown={handleBulletMouseDown}
         />
-        <div className={`${s.rangeLine} ${isDragging ? s.dragging : ""}`} />
+        <RangeLine isDragging={isDragging} />
       </div>
       <FixedLabel value={maxValue} isMaxLabel={true} />
     </div>

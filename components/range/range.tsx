@@ -1,6 +1,6 @@
 import React from "react";
-import FixedRange from "./fixedRange/fixedRange";
-import NormalRange from "./normalRange/normalRange";
+import FixedRange from "./fixedRange";
+import NormalRange from "./normalRange";
 
 interface RangeProps {
   isFixedRange?: boolean;

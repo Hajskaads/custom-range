@@ -4,8 +4,9 @@ import React, { useState, useRef, useEffect } from "react";
 import s from "../range.module.css";
 import m from "@styles/main.module.css";
 import { BulletType, NormalSliderDataOrErrorResponse } from "@lib/types";
-import InputLabel from "./inputLabel/inputLabel";
-import RangeBullet from "../shared/rangeBullet/rangeBullet";
+import InputLabel from "./inputLabel";
+import RangeBullet from "../shared/rangeBullet";
+import RangeLine from "../shared/rangeLine";
 import denormalizeValue from "@lib/denormalizeValue";
 import normalizeValue from "@lib/normalizeValue";
 import getNormalSliderRange from "@services/getNormalSliderRange";
@@ -170,7 +171,7 @@ const NormalRange: React.FC = () => {
           isOnTop={onTopBullet === maxBullet}
           handleMouseDown={handleBulletMouseDown}
         />
-        <div className={s.rangeLine} />
+        <RangeLine isDragging={isDragging} />
       </div>
       <InputLabel
         value={maxLabelValue}
