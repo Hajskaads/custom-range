@@ -1,3 +1,46 @@
+/* .pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+  @keyframes pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+} */
+
+.root {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  align-items: center;
+}
+
+.container {
+  width: 100%;
+  height: 0.5rem;
+  position: relative;
+  cursor: pointer;
+}
+
+.fixedLabel {
+  min-width: 3.75rem;
+  height: 1.5rem;
+  background-color: rgb(88, 96, 100);
+  border-radius: 0.375rem;
+}
+
+.inputLabel {
+  max-width: 4.75rem;
+  width: 100%;
+  border-radius: 0.375rem;
+  background-color: rgb(88, 96, 100);
+  height: 2.125rem;
+}
+
 .bullet {
   position: absolute;
   height: 1rem;
@@ -9,17 +52,26 @@
   cursor: grab;
   cursor: -moz-grab;
   cursor: -webkit-grab;
-  transition: transform 0.3s ease-in-out;
+  transform: translateX(-50%);
 }
 
-.bullet:hover {
-  transform: scale(1.2);
+.rightBullet {
+  left: 100%;
 }
 
-.onTop {
-  z-index: 20;
+.rightLabel {
+  margin-left: 1rem;
+}
+.leftLabel {
+  margin-right: 1rem;
 }
 
-.onDrag {
-  cursor: grabbing;
+.line {
+  background-color: rgb(88, 96, 100);
+  width: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 0.5rem;
+  border-radius: 9999px;
 }

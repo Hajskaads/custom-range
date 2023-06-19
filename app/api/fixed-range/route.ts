@@ -1,3 +1,4 @@
+import { FixedSliderDataResponse } from "@lib/types";
 import { NextResponse } from "next/server";
 
 /**
@@ -6,7 +7,9 @@ import { NextResponse } from "next/server";
  * @returns {Promise<NextResponse>} - A promise that resolves to the response object.
  */
 export async function GET(): Promise<NextResponse> {
-  const data: number[] = [1.99, 5.99, 10.99, 30.99, 50.99, 70.99];
+  const data: FixedSliderDataResponse = [
+    1.99, 5.99, 10.99, 30.99, 50.99, 70.99,
+  ];
   try {
     return NextResponse.json(data, { status: 200 });
   } catch (e: any) {

@@ -5,29 +5,34 @@ import {
 } from "@lib/types";
 
 export default async function getFixedSliderRange(): Promise<FixedSliderDataOrErrorResponse> {
-  const response: Response = await fetch("/api/fixed-range", {
-    method: "GET",
-    cache: "no-store",
-  });
+  try {
+    const response: Response = await fetch("/api/fixed-range", {
+      method: "GET",
+      cache: "no-store",
+    });
 
-  const data: FixedSliderResponse = await response.json();
-
-  //@ts-ignore
-  if (
-    response.status === 200 &&
-    Array.isArray(data) &&
-    data.length > 0 &&
-    data.every((item: number) => typeof item === "number")
-  ) {
     //@ts-ignore
-    return data; // Return the valid response directly
-  } else {
+    const { data, message }: FixedSliderResponse = await response.json();
+
+    if (
+      response.status === 200 &&
+      Array.isArray(data) &&
+      data.length > 0 &&
+      data.every((item: number) => typeof item === "number")
+    ) {
+      return data; // Return the valid response directly
+    } else {
+      // Create an error response
+      const errorResponse: ErrorResponse = {
+        error: message || "Something went wrong",
+      };
+      return errorResponse;
+    }
+  } catch (e: any) {
     // Create an error response
     const errorResponse: ErrorResponse = {
-      //@ts-ignore
-      error: data.message || "Something went wrong",
+      error: "Something went wrong",
     };
-    //@ts-ignore
     return errorResponse;
   }
 }

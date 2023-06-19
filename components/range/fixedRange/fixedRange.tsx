@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, Suspense } from "react";
 import s from "../range.module.css";
 import FixedLabel from "./fixedLabel";
 import RangeBullet from "../shared/rangeBullet";
@@ -10,54 +10,37 @@ import normalizeValue from "@lib/normalizeValue";
 import denormalizeValue from "@lib/denormalizeValue";
 import findClosestValue from "@lib/findClosestValue";
 import getFixedSliderRange from "@services/getFixedSliderRange";
+import ErrorMessage from "@components/errorMessage/errorMessage";
 
 const minBullet: BulletType = "min";
 const maxBullet: BulletType = "max";
 const initialMin: number = 0;
 const initialMax: number = 100;
 
-const FixedRange: React.FC = () => {
-  const [min, setMin] = useState<number>(initialMin);
-  const [max, setMax] = useState<number>(initialMax);
-  const [minValue, setMinValue] = useState<number>(initialMin);
-  const [maxValue, setMaxValue] = useState<number>(initialMax);
-  const [minNormalizedValue, setMinNormalizedValue] = useState<number>(0);
-  const [maxNormalizedValue, setMaxNormalizedValue] = useState<number>(100);
-  const [fixedValues, setFixedValues] = useState<number[]>([
-    initialMin,
-    initialMax,
-  ]);
+export interface FixedRangeProps {
+  rangeValues: number[];
+}
+
+const FixedRange: React.FC<FixedRangeProps> = async ({ rangeValues }) => {
+  const [min, setMin] = useState<number>(Math.min(...rangeValues));
+  const [max, setMax] = useState<number>(Math.max(...rangeValues));
+  const [minValue, setMinValue] = useState<number>(0);
+  const [maxValue, setMaxValue] = useState<number>(100);
+  const [minNormalizedValue, setMinNormalizedValue] =
+    useState<number>(initialMin);
+  const [maxNormalizedValue, setMaxNormalizedValue] =
+    useState<number>(initialMax);
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [activeBullet, setActiveBullet] = useState<BulletType | null>(null);
   const [onTopBullet, setOnTopBullet] = useState<BulletType>("max");
   const rangeRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    async function getRange() {
-      const data: FixedSliderDataOrErrorResponse = await getFixedSliderRange();
-      //@ts-ignore
-      if (data.error) {
-        //@ts-ignore
-        setError(data.error);
-      } else {
-        //@ts-ignore
-        const newMin = Math.min(...data);
-        //@ts-ignore
-        const newMax = Math.max(...data);
-        //@ts-ignore
-        setFixedValues(data);
-        setMin(newMin);
-        setMax(newMax);
-        setMinValue(newMin);
-        setMaxValue(newMax);
-      }
-    }
     const handleMouseUp = () => {
       setIsDragging(false);
       setActiveBullet(null);
     };
 
-    getRange();
     document.addEventListener("mouseup", handleMouseUp);
     return () => {
       document.removeEventListener("mouseup", handleMouseUp);
@@ -85,13 +68,13 @@ const FixedRange: React.FC = () => {
       if (
         activeBullet === minBullet &&
         newValue !== minValue &&
-        newValue > Math.min(...fixedValues) - 50 // If the condition is removed, bullet is re-rendered when it doesn't make sense, and if newValue > min is left, when moving the cursor very quickly, the minimum is not reached.
+        newValue > Math.min(...rangeValues) - 50 // If the condition is removed, bullet is re-rendered when it doesn't make sense, and if newValue > min is left, when moving the cursor very quickly, the minimum is not reached.
       ) {
         const newMinValue = +Math.max(
           Math.min(
             findClosestValue(
               denormalizeValue(min, max, newValue),
-              fixedValues,
+              rangeValues,
               false
             ),
             maxValue
@@ -106,13 +89,13 @@ const FixedRange: React.FC = () => {
       } else if (
         activeBullet === maxBullet &&
         newValue !== maxValue &&
-        newValue < Math.max(...fixedValues) * 1.5 // If the condition is removed, it is re-rendered when it doesn't make sense, and if newValue < max is left without a factor, when moving the cursor very quickly, the maximum is not reached.
+        newValue < Math.max(...rangeValues) * 1.5 // If the condition is removed, it is re-rendered when it doesn't make sense, and if newValue < max is left without a factor, when moving the cursor very quickly, the maximum is not reached.
       ) {
         const newMaxValue = +Math.min(
           Math.max(
             findClosestValue(
               denormalizeValue(min, max, newValue),
-              fixedValues,
+              rangeValues,
               true
             ),
             minValue
@@ -162,4 +145,14 @@ const FixedRange: React.FC = () => {
   );
 };
 
-export default FixedRange;
+export default async function NormalRangeWithProps() {
+  //@ts-ignore
+  const { data, error }: FixedSliderDataOrErrorResponse =
+    await getFixedSliderRange();
+
+  return data ? (
+    <FixedRange rangeValues={data} />
+  ) : (
+    <ErrorMessage errorMessage={error} />
+  );
+}
