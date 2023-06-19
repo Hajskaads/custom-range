@@ -1,7 +1,7 @@
 import s from "./errorMessage.module.css";
 import m from "@styles/main.module.css";
 
-export interface ErrorMessageProps {
+interface ErrorMessageProps {
   errorMessage?: string;
 }
 

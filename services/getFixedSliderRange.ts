@@ -1,4 +1,4 @@
-import { ErrorResponse, FixedSliderResponse } from "@lib/types";
+import { FixedSliderResponse } from "@lib/types";
 
 export default async function getFixedSliderRange(): Promise<FixedSliderResponse> {
   try {
