@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import s from "../range.module.css";
-import { BulletType, NormalSliderDataOrErrorResponse } from "@lib/types";
+import { BulletType, NormalSliderResponse } from "@lib/types";
 import InputLabel from "./inputLabel";
 import RangeBullet from "../shared/rangeBullet";
 import RangeLine from "../shared/rangeLine";
@@ -10,31 +10,54 @@ import denormalizeValue from "@lib/denormalizeValue";
 import normalizeValue from "@lib/normalizeValue";
 import getNormalSliderRange from "@services/getNormalSliderRange";
 import ErrorMessage from "@components/errorMessage";
+import Skelleton from "../shared/skelleton/skelleton";
 
 const minBullet: BulletType = "min";
 const maxBullet: BulletType = "max";
+const initialMin: number = 0;
+const initialMax: number = 100;
 
-export interface NormalRangeProps {
-  min: number;
-  max: number;
-}
-
-const NormalRange: React.FC<NormalRangeProps> = ({ min, max }) => {
-  const [minValue, setMinValue] = useState<number>(0);
-  const [maxValue, setMaxValue] = useState<number>(100);
-  const [minLabelValue, setMinLabelValue] = useState<string>(min.toString());
-  const [maxLabelValue, setMaxLabelValue] = useState<string>(max.toString());
+const NormalRange: React.FC = () => {
+  const [min, setMin] = useState<number>(initialMin);
+  const [max, setMax] = useState<number>(initialMax);
+  const [minValue, setMinValue] = useState<number>(initialMin);
+  const [maxValue, setMaxValue] = useState<number>(initialMax);
+  const [minLabelValue, setMinLabelValue] = useState<string>(
+    initialMin.toString()
+  );
+  const [maxLabelValue, setMaxLabelValue] = useState<string>(
+    initialMax.toString()
+  );
   const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
   const [activeBullet, setActiveBullet] = useState<BulletType | null>(null);
   const [onTopBullet, setOnTopBullet] = useState<BulletType>("max");
   const rangeRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    async function getRange() {
+      const { min, max, error }: NormalSliderResponse =
+        await getNormalSliderRange();
+      if (error) {
+        setError(error);
+        setLoading(false);
+      } else if (min && max) {
+        const newMinDenormalized = denormalizeValue(min, max, min).toString();
+        const newMaxDenormalized = denormalizeValue(min, max, max).toString();
+        setMin(min);
+        setMinLabelValue(newMinDenormalized);
+        setMax(max);
+        setMaxLabelValue(newMaxDenormalized);
+        setLoading(false);
+      }
+    }
     const handleMouseUp = () => {
       setIsDragging(false);
       setActiveBullet(null);
     };
 
+    getRange();
     document.addEventListener("mouseup", handleMouseUp);
     return () => {
       document.removeEventListener("mouseup", handleMouseUp);
@@ -114,6 +137,14 @@ const NormalRange: React.FC<NormalRangeProps> = ({ min, max }) => {
     }
   };
 
+  if (loading) {
+    return <Skelleton />;
+  }
+
+  if (error) {
+    return <ErrorMessage errorMessage={error} />;
+  }
+
   return (
     <div className={s.root}>
       <InputLabel
@@ -151,14 +182,4 @@ const NormalRange: React.FC<NormalRangeProps> = ({ min, max }) => {
   );
 };
 
-export default async function NormalRangeWithProps() {
-  //@ts-ignore
-  const { min, max, error }: NormalSliderDataOrErrorResponse =
-    await getNormalSliderRange();
-
-  return min && max ? (
-    <NormalRange min={min} max={max} />
-  ) : (
-    <ErrorMessage errorMessage={error} />
-  );
-}
+export default NormalRange;

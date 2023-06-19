@@ -17,7 +17,7 @@ export async function GET(): Promise<NextResponse> {
     // Handle error
     return NextResponse.json({
       status: 500,
-      message: "Something went wrong",
+      error: "Something went wrong",
     });
   }
 }

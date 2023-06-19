@@ -1,20 +1,15 @@
 import isNumber from "@lib/isNumber";
-import {
-  NormalSliderResponse,
-  ErrorResponse,
-  NormalSliderDataOrErrorResponse,
-} from "@lib/types";
+import { NormalSliderResponse } from "@lib/types";
 
-export default async function getNormalSliderRange(): Promise<NormalSliderDataOrErrorResponse> {
+export default async function getNormalSliderRange(): Promise<NormalSliderResponse> {
   try {
     const response: Response = await fetch("/api/normal-range", {
       method: "GET",
       cache: "no-store",
     });
 
-    //@ts-ignore
-    const { min, max, message }: NormalSliderResponse = await response.json();
-
+    const { min, max, error }: NormalSliderResponse =
+      (await response.json()) as NormalSliderResponse;
     if (
       response.status === 200 &&
       min &&
@@ -26,14 +21,14 @@ export default async function getNormalSliderRange(): Promise<NormalSliderDataOr
       return { min, max };
     } else {
       // Create an error response
-      const errorResponse: ErrorResponse = {
-        error: message || "Something went wrong",
+      const errorResponse: NormalSliderResponse = {
+        error: error || "Something went wrong",
       };
       return errorResponse;
     }
   } catch (e: any) {
     // Create an error response
-    const errorResponse: ErrorResponse = {
+    const errorResponse: NormalSliderResponse = {
       error: "Something went wrong",
     };
     return errorResponse;

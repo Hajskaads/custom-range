@@ -1,36 +1,33 @@
-import {
-  ErrorResponse,
-  FixedSliderDataOrErrorResponse,
-  FixedSliderResponse,
-} from "@lib/types";
+import { ErrorResponse, FixedSliderResponse } from "@lib/types";
 
-export default async function getFixedSliderRange(): Promise<FixedSliderDataOrErrorResponse> {
+export default async function getFixedSliderRange(): Promise<FixedSliderResponse> {
   try {
     const response: Response = await fetch("/api/fixed-range", {
       method: "GET",
       cache: "no-store",
     });
 
-    //@ts-ignore
-    const { data, message }: FixedSliderResponse = await response.json();
+    const { rangeValues, error }: FixedSliderResponse =
+      (await response.json()) as FixedSliderResponse;
 
     if (
       response.status === 200 &&
-      Array.isArray(data) &&
-      data.length > 0 &&
-      data.every((item: number) => typeof item === "number")
+      rangeValues &&
+      Array.isArray(rangeValues) &&
+      rangeValues.length > 0 &&
+      rangeValues.every((item: number) => typeof item === "number")
     ) {
-      return data; // Return the valid response directly
+      return { rangeValues }; // Return the valid response directly
     } else {
       // Create an error response
-      const errorResponse: ErrorResponse = {
-        error: message || "Something went wrong",
+      const errorResponse: FixedSliderResponse = {
+        error: error || "Something went wrong",
       };
       return errorResponse;
     }
   } catch (e: any) {
     // Create an error response
-    const errorResponse: ErrorResponse = {
+    const errorResponse: FixedSliderResponse = {
       error: "Something went wrong",
     };
     return errorResponse;
