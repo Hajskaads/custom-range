@@ -43,12 +43,10 @@ const NormalRange: React.FC = () => {
         setError(error);
         setLoading(false);
       } else if (min && max) {
-        const newMinDenormalized = denormalizeValue(min, max, min).toString();
-        const newMaxDenormalized = denormalizeValue(min, max, max).toString();
         setMin(min);
-        setMinLabelValue(newMinDenormalized);
+        setMinLabelValue(min.toString());
         setMax(max);
-        setMaxLabelValue(newMaxDenormalized);
+        setMaxLabelValue(max.toString());
         setLoading(false);
       }
     }

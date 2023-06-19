@@ -35,8 +35,6 @@ const InputLabel: FC<InputLabelProps> = ({
     let newError = "";
     let newValue = "";
 
-    console.log("max", max);
-
     // Test if the value is a decimal value where the decimal separator is "." or ","
     if (!testRegex.test(newLabelValue)) {
       newError = "Invalid input";

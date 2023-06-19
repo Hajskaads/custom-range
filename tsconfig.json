@@ -33,7 +33,10 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "jest.config.mjs"
+    "jest.config.mjs",
+    "__tests__/**/*.ts",
+    "__tests__/**/*.tsx",
+    "__tests__/components/range/shared/rangeBullet.test.jsx"
   ],
   "exclude": ["node_modules"]
 }

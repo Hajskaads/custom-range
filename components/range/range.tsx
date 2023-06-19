@@ -1,5 +1,3 @@
-"use client";
-
 import FixedRange from "./fixedRange";
 import NormalRange from "./normalRange";
 

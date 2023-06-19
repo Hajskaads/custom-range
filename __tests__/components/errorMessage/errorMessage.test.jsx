@@ -1,6 +1,7 @@
 import React from "react";
 import { render } from "@testing-library/react";
 import ErrorMessage from "@components/errorMessage";
+import "@testing-library/jest-dom";
 
 describe("ErrorMessage", () => {
   it("renders the error message correctly", () => {
@@ -16,6 +17,4 @@ describe("ErrorMessage", () => {
     const defaultErrorMessageElement = getByText(defaultErrorMessage);
     expect(defaultErrorMessageElement).toBeInTheDocument();
   });
-
-  // Add more test cases as needed
 });
