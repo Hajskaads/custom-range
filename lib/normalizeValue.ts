@@ -10,6 +10,9 @@ export default function normalizeValue(
   max: number,
   value: number
 ): number {
+  if (min === max || min > max || max < min) {
+    return 0;
+  }
   const range = max - min; // Calculate the range of the values
   const normalized = ((value - min) / range) * 100; // Normalize the value within the range and convert to a 0-100 scale
   return normalized; // Return the normalized value

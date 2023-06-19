@@ -1,15 +1,11 @@
 "use client";
 
-import React, { useState, useRef, useEffect, Suspense } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import s from "../range.module.css";
 import FixedLabel from "./fixedLabel";
 import RangeBullet from "../shared/rangeBullet";
 import RangeLine from "../shared/rangeLine";
-import {
-  BulletType,
-  FixedSliderDataOrErrorResponse,
-  FixedSliderResponse,
-} from "@lib/types";
+import { BulletType, FixedSliderResponse } from "@lib/types";
 import normalizeValue from "@lib/normalizeValue";
 import denormalizeValue from "@lib/denormalizeValue";
 import findClosestValue from "@lib/findClosestValue";
