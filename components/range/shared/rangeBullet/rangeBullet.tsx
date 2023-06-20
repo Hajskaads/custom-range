@@ -6,6 +6,9 @@ export interface RangeBulletProps {
   offsetX: number;
   bullet: BulletType;
   isOnTop: boolean;
+  min: number;
+  max: number;
+  currentValue: number;
   handleMouseDown: (
     bullet: BulletType,
     e: React.MouseEvent<HTMLDivElement, MouseEvent>
@@ -17,6 +20,9 @@ const RangeBullet: FC<RangeBulletProps> = ({
   offsetX,
   bullet,
   isOnTop,
+  min,
+  max,
+  currentValue,
   handleMouseDown,
   isActive,
 }) => {
@@ -27,6 +33,13 @@ const RangeBullet: FC<RangeBulletProps> = ({
         isActive ? s.onDrag : ""
       }`}
       style={{ left: `calc(${offsetX}% - 0.5rem)` }}
+      role="slider"
+      tabIndex={0}
+      aria-valuemin={min}
+      aria-valuemax={max}
+      aria-valuenow={currentValue}
+      aria-valuetext={`${bullet}: ${currentValue}`}
+      aria-labelledby={`${bullet}-slider-label`}
       onMouseDown={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) =>
         handleMouseDown(bullet, e)
       }

@@ -158,6 +158,9 @@ const NormalRange: React.FC = () => {
           offsetX={+minValue}
           bullet={minBullet}
           isOnTop={onTopBullet === minBullet}
+          min={min}
+          max={+maxLabelValue}
+          currentValue={+minLabelValue}
           handleMouseDown={handleBulletMouseDown}
         />
         <RangeBullet
@@ -165,6 +168,9 @@ const NormalRange: React.FC = () => {
           offsetX={maxValue}
           bullet={maxBullet}
           isOnTop={onTopBullet === maxBullet}
+          min={+minLabelValue}
+          max={max}
+          currentValue={+maxLabelValue}
           handleMouseDown={handleBulletMouseDown}
         />
         <RangeLine isDragging={isDragging} />
