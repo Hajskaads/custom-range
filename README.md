@@ -46,3 +46,9 @@ While both sliders have basic accesibility so the user is able to know the bulle
 ## Fixed Range
 
 Since the allowed bullet values are only the ones provided by the valuesRange, this range implements a function to get the closest value to the current cursor location while dragging the bullet on the line. This works by normalizing the valuesRange from 0 to 100, find the closest value of the current pointer position in % on the range line, and then denormalize it again to get the real corresponding value in the valuesRange and show it on the label.
+
+# Improvements for the next iteration:
+
+- Both <NormalRange /> and <FixedRange /> render twice when <Range /> is mounted, as can be seen in the last case of their corresponging test files. Making them only render once could boost performance
+- Making iteracting accesibility with keys in the FixedSlider.
+- Implementing Suspense when the APIs in the Ranges are loaded.
