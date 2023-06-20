@@ -78,7 +78,7 @@ const FixedRange: React.FC = () => {
   };
 
   useEffect(() => {
-    const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
+    const handleMouseMove = (event: MouseEvent) => {
       if (!isDragging || !rangeRef.current) return;
 
       const range = rangeRef.current.getBoundingClientRect();
@@ -132,11 +132,9 @@ const FixedRange: React.FC = () => {
     };
 
     if (isDragging) {
-      // @ts-ignore
       document.addEventListener("mousemove", handleMouseMove);
     }
     return () => {
-      // @ts-ignore
       document.removeEventListener("mousemove", handleMouseMove);
     };
   }, [isDragging, activeBullet, maxValue, minValue]);
