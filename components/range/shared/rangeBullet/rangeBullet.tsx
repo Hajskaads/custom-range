@@ -31,6 +31,7 @@ const RangeBullet: FC<RangeBulletProps> = ({
   return (
     <div
       id={`bullet-${bullet}`}
+      aria-label={`bullet-${bullet}`}
       className={`${s.bullet} ${isOnTop ? s.onTop : ""} ${
         isActive ? s.onDrag : ""
       }`}
@@ -41,7 +42,7 @@ const RangeBullet: FC<RangeBulletProps> = ({
       aria-valuemax={max}
       aria-valuenow={currentValue}
       aria-valuetext={`${bullet}: ${currentValue}`}
-      aria-labelledby={`${bullet}-slider-label`}
+      aria-labelledby={`bullet-${bullet}-slider`}
       onMouseDown={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) =>
         handleMouseDown(bullet, e)
       }

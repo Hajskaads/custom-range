@@ -21,6 +21,7 @@ describe("getFixedSliderRange", () => {
       status: 200,
       json: jest.fn().mockResolvedValue({ error: "Invalid response" }),
     };
+    // @ts-ignore
     jest.spyOn(global, "fetch").mockResolvedValue(mockResponse);
 
     const result = await getFixedSliderRange();
@@ -43,6 +44,7 @@ describe("getFixedSliderRange", () => {
       status: 200,
       json: jest.fn().mockResolvedValue({ rangeValues: "not an array" }),
     };
+    // @ts-ignore
     jest.spyOn(global, "fetch").mockResolvedValue(mockResponse);
 
     const result = await getFixedSliderRange();
@@ -56,6 +58,7 @@ describe("getFixedSliderRange", () => {
       status: 200,
       json: jest.fn().mockResolvedValue({ rangeValues: [] }),
     };
+    // @ts-ignore
     jest.spyOn(global, "fetch").mockResolvedValue(mockResponse);
 
     const result = await getFixedSliderRange();
@@ -69,6 +72,7 @@ describe("getFixedSliderRange", () => {
       status: 200,
       json: jest.fn().mockResolvedValue({ rangeValues: [1, "2", 3] }),
     };
+    // @ts-ignore
     jest.spyOn(global, "fetch").mockResolvedValue(mockResponse);
 
     const result = await getFixedSliderRange();

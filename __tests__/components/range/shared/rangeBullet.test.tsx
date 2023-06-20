@@ -2,14 +2,15 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import RangeBullet, {
   RangeBulletProps,
-} from "@components/range/shared/rangeBullet";
+} from "@components/range/shared/rangeBullet/rangeBullet";
 import "@testing-library/jest-dom";
 import normalizeValue from "@lib/normalizeValue";
+import { BulletType } from "@lib/types";
 
 describe("RangeBullet", () => {
   const defaultProps: RangeBulletProps = {
     offsetX: normalizeValue(10, 70, 50),
-    bullet: "min",
+    bullet: "min" as BulletType,
     isOnTop: true,
     min: 10,
     max: 70,
@@ -23,7 +24,7 @@ describe("RangeBullet", () => {
     {
       ...defaultProps,
       offsetX: normalizeValue(10, 70, 0),
-      bullet: "min",
+      bullet: "min" as BulletType,
       isOnTop: true,
       min: 10,
       max: 70,
@@ -34,7 +35,7 @@ describe("RangeBullet", () => {
     {
       ...defaultProps,
       offsetX: normalizeValue(10, 70, 70),
-      bullet: "max",
+      bullet: "max" as BulletType,
       isOnTop: false,
       min: 10,
       max: 70,
@@ -45,7 +46,7 @@ describe("RangeBullet", () => {
     {
       ...defaultProps,
       offsetX: normalizeValue(10, 70, 70),
-      bullet: "max",
+      bullet: "max" as BulletType,
       isOnTop: true,
       min: 10,
       max: 70,
@@ -56,7 +57,7 @@ describe("RangeBullet", () => {
     {
       ...defaultProps,
       offsetX: normalizeValue(10, 70, 45),
-      bullet: "min",
+      bullet: "min" as BulletType,
       isOnTop: false,
       min: 10,
       max: 70,
@@ -93,9 +94,9 @@ describe("RangeBullet", () => {
     it(`calls the handleMouseDown function when the RangeBullet is clicked (test case ${
       index + 1
     })`, () => {
-      const { container } = render(<RangeBullet {...props} />);
-      const rangeBulletElement = container?.firstChild;
-
+      render(<RangeBullet {...props} />);
+      const rangeBulletElement = screen.getByRole("slider");
+      // @ts-ignore
       props.handleMouseDown.mockClear(); // Reset the mock function
 
       fireEvent.mouseDown(rangeBulletElement);
