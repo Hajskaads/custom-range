@@ -16,7 +16,7 @@ describe("NormalRange", () => {
       max: mockMax,
     });
     // Wait for the component to finish loading and update the state
-    const promise = Promise.resolve({ data: { min: 10, max: 70 } });
+    const promise = Promise.resolve({ data: { min: mockMin, max: mockMax } });
     await act(async () => {
       jest.mock("services/getNormalSliderRange", () => promise);
       render(<NormalRange />);
@@ -32,9 +32,7 @@ describe("NormalRange", () => {
     // Simulate mouseup event to release the drag
     fireEvent.mouseUp(minBullet);
 
-    const maxBullet = screen.getByRole("slider", { name: /bullet-max/i });
-
-    expect(maxBullet).toHaveStyle({
+    expect(minBullet).toHaveStyle({
       left: `calc(${100}% - 0.5rem)`,
     });
   });
@@ -46,7 +44,7 @@ describe("NormalRange", () => {
       max: mockMax,
     });
     // Wait for the component to finish loading and update the state
-    const promise = Promise.resolve({ data: { min: 10, max: 70 } });
+    const promise = Promise.resolve({ data: { min: mockMin, max: mockMax } });
     await act(async () => {
       jest.mock("services/getNormalSliderRange", () => promise);
       render(<NormalRange />);
@@ -65,7 +63,5 @@ describe("NormalRange", () => {
     expect(maxBullet).toHaveStyle({
       left: `calc(${0}% - 0.5rem)`,
     });
-
-    screen.debug();
   });
 });
