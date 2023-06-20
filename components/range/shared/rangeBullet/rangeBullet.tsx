@@ -34,7 +34,6 @@ const RangeBullet: FC<RangeBulletProps> = ({
       }`}
       style={{ left: `calc(${offsetX}% - 0.5rem)` }}
       role="slider"
-      tabIndex={0}
       aria-valuemin={min}
       aria-valuemax={max}
       aria-valuenow={currentValue}
