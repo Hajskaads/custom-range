@@ -72,6 +72,7 @@ const InputLabel: FC<InputLabelProps> = ({
           pattern={`^\d{0,${max.toString().length}}([.,]\d{1,2})?$`}
           value={value}
           onChange={handleChange}
+          tabIndex={0}
         />
         <span className="absolute whitespace-nowrap text-bold text-md pr-3">
           €
