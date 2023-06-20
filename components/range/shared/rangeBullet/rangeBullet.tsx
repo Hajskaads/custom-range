@@ -13,6 +13,7 @@ export interface RangeBulletProps {
     bullet: BulletType,
     e: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => void;
+  handleKeyDown?: (bullet: BulletType, e: React.KeyboardEvent) => void;
   isActive?: boolean;
 }
 
@@ -24,6 +25,7 @@ const RangeBullet: FC<RangeBulletProps> = ({
   max,
   currentValue,
   handleMouseDown,
+  handleKeyDown,
   isActive,
 }) => {
   return (
@@ -34,6 +36,7 @@ const RangeBullet: FC<RangeBulletProps> = ({
       }`}
       style={{ left: `calc(${offsetX}% - 0.5rem)` }}
       role="slider"
+      tabIndex={handleKeyDown ? 0 : undefined}
       aria-valuemin={min}
       aria-valuemax={max}
       aria-valuenow={currentValue}
@@ -42,6 +45,11 @@ const RangeBullet: FC<RangeBulletProps> = ({
       onMouseDown={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) =>
         handleMouseDown(bullet, e)
       }
+      onKeyDown={(e: React.KeyboardEvent) => {
+        if (handleKeyDown) {
+          return handleKeyDown(bullet, e);
+        }
+      }}
     />
   );
 };

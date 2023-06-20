@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import s from "../range.module.css";
 import { BulletType, NormalSliderResponse } from "@lib/types";
 import InputLabel from "./inputLabel";
@@ -71,15 +71,8 @@ const NormalRange: React.FC = () => {
     setIsDragging(true);
   };
 
-  useEffect(() => {
-    const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
-      if (!isDragging || !rangeRef.current) return;
-
-      const range = rangeRef.current.getBoundingClientRect();
-      const rangeWidth = range.width;
-      const offsetX = event.clientX - range.left;
-      const newValue = (offsetX / rangeWidth) * 100;
-
+  const handleBulletChange = useCallback(
+    (newValue: number, activeBullet: string) => {
       if (activeBullet === minBullet && newValue !== +minValue) {
         const newMinValue = +Math.max(Math.min(newValue, maxValue), 0).toFixed(
           2
@@ -104,6 +97,22 @@ const NormalRange: React.FC = () => {
         ).toFixed(0);
         setMaxLabelValue(newMaxLabelValue);
       }
+    },
+    [minValue, maxValue, min, max]
+  );
+
+  useEffect(() => {
+    const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
+      if (!isDragging || !rangeRef.current) return;
+
+      const range = rangeRef.current.getBoundingClientRect();
+      const rangeWidth = range.width;
+      const offsetX = event.clientX - range.left;
+      const newValue = (offsetX / rangeWidth) * 100;
+
+      if (activeBullet) {
+        handleBulletChange(newValue, activeBullet);
+      }
     };
 
     if (isDragging) {
@@ -114,7 +123,7 @@ const NormalRange: React.FC = () => {
       // @ts-ignore
       document.removeEventListener("mousemove", handleMouseMove);
     };
-  }, [isDragging, activeBullet, minValue, maxValue]);
+  }, [isDragging, activeBullet, handleBulletChange]);
 
   const handleLabelChange = (
     newValue: string,
@@ -132,6 +141,27 @@ const NormalRange: React.FC = () => {
       if (!isError) {
         setMaxValue(normalizeValue(min, max, +newValue));
       }
+    }
+  };
+
+  const handleBulletKeyDown = (
+    bullet: BulletType,
+    event: React.KeyboardEvent
+  ): void => {
+    setActiveBullet(bullet);
+    setOnTopBullet(bullet);
+    let Xstart: number = 0;
+    if (bullet === "min") {
+      Xstart = minValue;
+    } else if (bullet === "max") {
+      Xstart = maxValue;
+    }
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      handleBulletChange(Xstart - 1, bullet);
+    } else if (event.key === "ArrowRight") {
+      event.preventDefault();
+      handleBulletChange(Xstart + 1, bullet);
     }
   };
 
@@ -162,6 +192,7 @@ const NormalRange: React.FC = () => {
           max={+maxLabelValue}
           currentValue={+minLabelValue}
           handleMouseDown={handleBulletMouseDown}
+          handleKeyDown={handleBulletKeyDown}
         />
         <RangeBullet
           isActive={activeBullet === maxBullet}
@@ -172,6 +203,7 @@ const NormalRange: React.FC = () => {
           max={max}
           currentValue={+maxLabelValue}
           handleMouseDown={handleBulletMouseDown}
+          handleKeyDown={handleBulletKeyDown}
         />
         <RangeLine isDragging={isDragging} />
       </div>
