@@ -10,8 +10,8 @@ import normalizeValue from "@lib/normalizeValue";
 import denormalizeValue from "@lib/denormalizeValue";
 import findClosestValue from "@lib/findClosestValue";
 import getFixedSliderRange from "@services/getFixedSliderRange";
-import ErrorMessage from "@components/errorMessage/errorMessage";
-import Skelleton from "../shared/skelleton/skelleton";
+import ErrorMessage from "@components/errorMessage";
+import Skelleton from "../shared/skelleton";
 
 const minBullet: BulletType = "min";
 const maxBullet: BulletType = "max";

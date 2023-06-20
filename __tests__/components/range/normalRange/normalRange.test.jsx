@@ -1,11 +1,11 @@
 import React from "react";
 import { render, act, screen } from "@testing-library/react";
-import FixedRange from "@components/range/fixedRange";
+import NormalRange from "@components/range/normalRange";
 import ErrorMessage from "@components/errorMessage";
-import FixedLabel from "@components/range/fixedRange/fixedLabel";
+import InputLabel from "@components/range/normalRange/inputLabel";
 import RangeBullet from "@components/range/shared/rangeBullet";
 import RangeLine from "@components/range/shared/rangeLine";
-import getFixedSliderRange from "@services/getFixedSliderRange";
+import getNormalSliderRange from "@services/getNormalSliderRange";
 import "@testing-library/jest-dom";
 
 jest.mock("components/errorMessage", () => {
@@ -16,10 +16,10 @@ jest.mock("components/errorMessage", () => {
   ));
 });
 
-jest.mock("components/range/fixedRange/fixedLabel", () => {
+jest.mock("components/range/normalRange/inputLabel", () => {
   return jest.fn(() => (
-    <div className="fixedLabel" data-testid="fixedLabel">
-      Fixed Label Component
+    <div className="inputLabel" data-testid="inputLabel">
+      Input Label Component
     </div>
   ));
 });
@@ -40,42 +40,42 @@ jest.mock("components/range/shared/rangeLine", () => {
   ));
 });
 
-jest.mock("services/getFixedSliderRange", () => {
-  return jest.fn().mockResolvedValue({ rangeValues: [0, 10, 40, 70, 100] });
+jest.mock("services/getNormalSliderRange", () => {
+  return jest.fn().mockResolvedValue({ min: 1, max: 100 });
 });
 
-describe("FixedRange", () => {
+describe("NormalRange", () => {
   beforeEach(() => {
-    getFixedSliderRange.mockImplementation(() =>
-      Promise.resolve({ rangeValues: [0, 10, 40, 70, 100] })
+    getNormalSliderRange.mockImplementation(() =>
+      Promise.resolve({ min: 1, max: 100 })
     );
   });
 
   it("renders the component without error", async () => {
     await act(async () => {
-      render(<FixedRange />);
+      render(<NormalRange />);
     });
   });
 
   it("displays the error message when there is an error", async () => {
-    getFixedSliderRange.mockImplementation(() =>
+    getNormalSliderRange.mockImplementation(() =>
       Promise.resolve({ error: "Something went wrong" })
     );
     await act(async () => {
-      render(<FixedRange />);
+      render(<NormalRange />);
     });
     expect(ErrorMessage).toHaveBeenCalledTimes(1);
     expect(screen.queryByTestId("error-message")).toBeInTheDocument();
   });
 
-  it("displays the all the subcomponents of FixedRange when rangeValues is correct", async () => {
-    getFixedSliderRange.mockImplementation(() =>
-      Promise.resolve({ rangeValues: [0, 10, 40, 70, 100] })
+  it("displays the all the subcomponents of NormalRange when rangeValues is correct", async () => {
+    getNormalSliderRange.mockImplementation(() =>
+      Promise.resolve({ min: 1, max: 100 })
     );
     await act(async () => {
-      render(<FixedRange />);
+      render(<NormalRange />);
     });
-    expect(FixedLabel).toHaveBeenCalledTimes(2);
+    expect(InputLabel).toHaveBeenCalledTimes(2);
     expect(RangeBullet).toHaveBeenCalledTimes(2);
     expect(RangeLine).toHaveBeenCalledTimes(1);
     expect(screen.queryByTestId("rangeLine")).toBeInTheDocument();

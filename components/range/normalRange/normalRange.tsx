@@ -10,7 +10,7 @@ import denormalizeValue from "@lib/denormalizeValue";
 import normalizeValue from "@lib/normalizeValue";
 import getNormalSliderRange from "@services/getNormalSliderRange";
 import ErrorMessage from "@components/errorMessage";
-import Skelleton from "../shared/skelleton/skelleton";
+import Skelleton from "../shared/skelleton";
 
 const minBullet: BulletType = "min";
 const maxBullet: BulletType = "max";
