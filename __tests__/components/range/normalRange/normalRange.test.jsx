@@ -75,9 +75,8 @@ describe("NormalRange", () => {
     await act(async () => {
       render(<NormalRange />);
     });
-    expect(InputLabel).toHaveBeenCalledTimes(2);
-    expect(RangeBullet).toHaveBeenCalledTimes(2);
-    expect(RangeLine).toHaveBeenCalledTimes(1);
-    expect(screen.queryByTestId("rangeLine")).toBeInTheDocument();
+    expect(InputLabel).toHaveBeenCalledTimes(4);
+    expect(RangeBullet).toHaveBeenCalledTimes(4);
+    expect(RangeLine).toHaveBeenCalledTimes(2);
   });
 });

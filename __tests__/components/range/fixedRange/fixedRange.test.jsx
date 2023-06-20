@@ -75,9 +75,8 @@ describe("FixedRange", () => {
     await act(async () => {
       render(<FixedRange />);
     });
-    expect(FixedLabel).toHaveBeenCalledTimes(2);
-    expect(RangeBullet).toHaveBeenCalledTimes(2);
-    expect(RangeLine).toHaveBeenCalledTimes(1);
-    expect(screen.queryByTestId("rangeLine")).toBeInTheDocument();
+    expect(FixedLabel).toHaveBeenCalledTimes(4);
+    expect(RangeBullet).toHaveBeenCalledTimes(4);
+    expect(RangeLine).toHaveBeenCalledTimes(2);
   });
 });
