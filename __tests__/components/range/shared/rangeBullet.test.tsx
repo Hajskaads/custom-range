@@ -1,13 +1,19 @@
 import React from "react";
-import { render, fireEvent } from "@testing-library/react";
-import RangeBullet from "@components/range/shared/rangeBullet";
+import { render, screen, fireEvent } from "@testing-library/react";
+import RangeBullet, {
+  RangeBulletProps,
+} from "@components/range/shared/rangeBullet";
 import "@testing-library/jest-dom";
+import normalizeValue from "@lib/normalizeValue";
 
 describe("RangeBullet", () => {
-  const defaultProps = {
-    offsetX: 50,
+  const defaultProps: RangeBulletProps = {
+    offsetX: normalizeValue(10, 70, 50),
     bullet: "min",
     isOnTop: true,
+    min: 10,
+    max: 70,
+    currentValue: 50,
     handleMouseDown: jest.fn(),
     isActive: true,
   };
@@ -16,33 +22,45 @@ describe("RangeBullet", () => {
     // Test case 1
     {
       ...defaultProps,
-      offsetX: 0,
+      offsetX: normalizeValue(10, 70, 0),
       bullet: "min",
       isOnTop: true,
+      min: 10,
+      max: 70,
+      currentValue: 0,
       isActive: true,
     },
     // Test case 2
     {
       ...defaultProps,
-      offsetX: 100,
+      offsetX: normalizeValue(10, 70, 70),
       bullet: "max",
       isOnTop: false,
+      min: 10,
+      max: 70,
+      currentValue: 70,
       isActive: true,
     },
     // Test case 3
     {
       ...defaultProps,
-      offsetX: 100,
+      offsetX: normalizeValue(10, 70, 70),
       bullet: "max",
       isOnTop: true,
+      min: 10,
+      max: 70,
+      currentValue: 50,
       isActive: false,
     },
     // Test case 4
     {
       ...defaultProps,
-      offsetX: 75,
+      offsetX: normalizeValue(10, 70, 45),
       bullet: "min",
       isOnTop: false,
+      min: 10,
+      max: 70,
+      currentValue: 45,
       isActive: false,
     },
   ];
@@ -51,8 +69,9 @@ describe("RangeBullet", () => {
     it(`renders the RangeBullet component correctly (test case ${
       index + 1
     })`, () => {
-      const { container } = render(<RangeBullet {...props} />);
-      const rangeBulletElement = container.firstChild;
+      render(<RangeBullet {...props} />);
+      const rangeBulletElement = screen.getByRole("slider");
+      expect(rangeBulletElement).toBeInTheDocument();
 
       expect(rangeBulletElement).toBeInTheDocument();
       expect(rangeBulletElement).toHaveClass("bullet");
@@ -75,7 +94,7 @@ describe("RangeBullet", () => {
       index + 1
     })`, () => {
       const { container } = render(<RangeBullet {...props} />);
-      const rangeBulletElement = container.firstChild;
+      const rangeBulletElement = container?.firstChild;
 
       props.handleMouseDown.mockClear(); // Reset the mock function
 
