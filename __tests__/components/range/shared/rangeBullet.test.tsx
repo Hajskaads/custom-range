@@ -96,7 +96,7 @@ describe("RangeBullet", () => {
     })`, () => {
       render(<RangeBullet {...props} />);
       const rangeBulletElement = screen.getByRole("slider");
-      props.handleMouseDown.mockClear(); // Reset the mock function
+      (props.handleMouseDown as any).mockClear(); // Reset the mock function
 
       fireEvent.mouseDown(rangeBulletElement);
 
