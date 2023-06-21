@@ -9,6 +9,37 @@ const mockMin = 10; // Set the expected value for min
 const mockMax = 70; // Set the expected value for max
 
 describe("NormalRange", () => {
+  it("It fetches the data from the API correctly and displays it in its min and max labels", async () => {
+    // @ts-ignore
+    getNormalSliderRange.mockResolvedValueOnce({
+      min: mockMin,
+      max: mockMax,
+    });
+    await act(async () => {
+      render(<NormalRange />);
+    });
+    const minLabel = screen.getByLabelText("Enter a min slider number");
+    const maxLabel = screen.getByLabelText("Enter a max slider number");
+
+    expect(minLabel).toHaveValue(mockMin);
+    expect(maxLabel).toHaveValue(mockMax);
+  });
+
+  it("It the API returns an error it displays it correctly and no slider can be found", async () => {
+    const errorText: string = "Error 500";
+    // @ts-ignore
+    getNormalSliderRange.mockResolvedValueOnce({
+      error: errorText,
+    });
+    await act(async () => {
+      render(<NormalRange />);
+    });
+    const sliders = screen.queryAllByRole("slider");
+    expect(sliders.length).toBe(0);
+    const error = screen.getByText(errorText);
+    expect(error).toBeInTheDocument();
+  });
+
   it("The min bullet moves accordingly to the right when dragged by the mouse, never surpassing the max value", async () => {
     // @ts-ignore
     getNormalSliderRange.mockResolvedValueOnce({
@@ -16,9 +47,7 @@ describe("NormalRange", () => {
       max: mockMax,
     });
     // Wait for the component to finish loading and update the state
-    const promise = Promise.resolve({ data: { min: mockMin, max: mockMax } });
     await act(async () => {
-      jest.mock("services/getNormalSliderRange", () => promise);
       render(<NormalRange />);
     });
     const minBullet = screen.getByRole("slider", { name: /bullet-min/i });
@@ -44,9 +73,7 @@ describe("NormalRange", () => {
       max: mockMax,
     });
     // Wait for the component to finish loading and update the state
-    const promise = Promise.resolve({ data: { min: mockMin, max: mockMax } });
     await act(async () => {
-      jest.mock("services/getNormalSliderRange", () => promise);
       render(<NormalRange />);
     });
     const maxBullet = screen.getByRole("slider", { name: /bullet-max/i });

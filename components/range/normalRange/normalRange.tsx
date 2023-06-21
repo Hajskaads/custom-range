@@ -78,10 +78,9 @@ const NormalRange: React.FC = () => {
           2
         );
         setMinValue(newMinValue);
-        const newMinLabelValue: string = denormalizeValue(
-          min,
-          max,
-          +minValue
+        const newMinLabelValue: string = Math.min(
+          denormalizeValue(min, max, +minValue),
+          +maxLabelValue
         ).toFixed(0);
         setMinLabelValue(newMinLabelValue);
       } else if (activeBullet === maxBullet && newValue !== +maxValue) {
@@ -90,12 +89,13 @@ const NormalRange: React.FC = () => {
           100
         ).toFixed(2);
         setMaxValue(newMaxValue);
-        const newMaxLabelValue: string = denormalizeValue(
-          min,
-          max,
-          +maxValue
+        const newMaxLabelValue: string = Math.max(
+          denormalizeValue(min, max, +maxValue),
+          +minLabelValue
         ).toFixed(0);
-        setMaxLabelValue(newMaxLabelValue);
+        setMaxLabelValue(
+          Math.max(+newMaxLabelValue, +minLabelValue).toFixed(0)
+        );
       }
     },
     [minValue, maxValue, min, max]

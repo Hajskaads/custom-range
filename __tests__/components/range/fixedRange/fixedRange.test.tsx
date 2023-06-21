@@ -1,25 +1,51 @@
 import React from "react";
 import { render, act, screen, fireEvent } from "@testing-library/react";
-import NormalRange from "@components/range/normalRange";
-import getNormalSliderRange from "@services/getNormalSliderRange";
+import FixedRange from "@components/range/fixedRange";
+import getFixedSliderRange from "@services/getFixedSliderRange";
+import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 
-jest.mock("services/getNormalSliderRange");
-const mockMin = 10; // Set the expected value for min
-const mockMax = 70; // Set the expected value for max
+jest.mock("services/getFixedSliderRange");
+const rangeValues = [1.99, 5.99, 10.99, 30.99, 50.99, 70.99]; // Set the expected range values
 
-describe("NormalRange", () => {
+describe("FixedRange", () => {
+  it("It fetches the data from the API correctly and displays it in its min and max labels", async () => {
+    // @ts-ignore
+    getFixedSliderRange.mockResolvedValueOnce({
+      rangeValues,
+    });
+    await act(async () => {
+      render(<FixedRange />);
+    });
+    const minText = screen.getByText("1.99 €");
+    const maxText = screen.getByText("70.99 €");
+
+    expect(minText).toBeInTheDocument();
+    expect(maxText).toBeInTheDocument();
+  });
+  it("It the API returns an error it displays it correctly and no slider can be found", async () => {
+    const errorText: string = "Error 500";
+    // @ts-ignore
+    getFixedSliderRange.mockResolvedValueOnce({
+      error: errorText,
+    });
+    await act(async () => {
+      render(<FixedRange />);
+    });
+    const sliders = screen.queryAllByRole("slider");
+    expect(sliders.length).toBe(0);
+    const error = screen.getByText(errorText);
+    expect(error).toBeInTheDocument();
+  });
+
   it("The min bullet moves accordingly to the right when dragged by the mouse, never surpassing the max value", async () => {
     // @ts-ignore
-    getNormalSliderRange.mockResolvedValueOnce({
-      min: mockMin,
-      max: mockMax,
+    getFixedSliderRange.mockResolvedValueOnce({
+      rangeValues,
     });
     // Wait for the component to finish loading and update the state
-    const promise = Promise.resolve({ data: { min: 10, max: 70 } });
     await act(async () => {
-      jest.mock("services/getNormalSliderRange", () => promise);
-      render(<NormalRange />);
+      render(<FixedRange />);
     });
     const minBullet = screen.getByRole("slider", { name: /bullet-min/i });
 
@@ -32,24 +58,18 @@ describe("NormalRange", () => {
     // Simulate mouseup event to release the drag
     fireEvent.mouseUp(minBullet);
 
-    const maxBullet = screen.getByRole("slider", { name: /bullet-max/i });
-
-    expect(maxBullet).toHaveStyle({
+    expect(minBullet).toHaveStyle({
       left: `calc(${100}% - 0.5rem)`,
     });
   });
-
-  it("The max bullet moves accordingly to the left when dragged by the mouse, never surpassing the min value", async () => {
+  it("The min bullet moves accordingly to the right when dragged by the mouse, never surpassing the max value", async () => {
     // @ts-ignore
-    getNormalSliderRange.mockResolvedValueOnce({
-      min: mockMin,
-      max: mockMax,
+    getFixedSliderRange.mockResolvedValueOnce({
+      rangeValues,
     });
     // Wait for the component to finish loading and update the state
-    const promise = Promise.resolve({ data: { min: 10, max: 70 } });
     await act(async () => {
-      jest.mock("services/getNormalSliderRange", () => promise);
-      render(<NormalRange />);
+      render(<FixedRange />);
     });
     const maxBullet = screen.getByRole("slider", { name: /bullet-max/i });
 
@@ -65,7 +85,5 @@ describe("NormalRange", () => {
     expect(maxBullet).toHaveStyle({
       left: `calc(${0}% - 0.5rem)`,
     });
-
-    screen.debug();
   });
 });

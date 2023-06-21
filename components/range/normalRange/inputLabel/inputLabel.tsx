@@ -66,7 +66,7 @@ const InputLabel: FC<InputLabelProps> = ({
       >
         <input
           id={`label-input-${bullet}`}
-          aria-label="Enter a number"
+          aria-label={`Enter a ${bullet} slider number`}
           className={s.label}
           type="number"
           pattern={`^\d{0,${max.toString().length}}([.,]\d{1,2})?$`}
