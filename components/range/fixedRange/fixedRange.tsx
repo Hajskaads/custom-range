@@ -5,13 +5,13 @@ import s from "../range.module.css";
 import FixedLabel from "./fixedLabel";
 import RangeBullet from "../shared/rangeBullet";
 import RangeLine from "../shared/rangeLine";
-import { BulletType, FixedSliderResponse } from "@lib/types";
+import { BulletType } from "@lib/types";
 import normalizeValue from "@lib/normalizeValue";
 import denormalizeValue from "@lib/denormalizeValue";
 import findClosestValue from "@lib/findClosestValue";
-import getFixedSliderRange from "@services/getFixedSliderRange";
 import ErrorMessage from "@components/errorMessage";
 import Skelleton from "../shared/skelleton";
+import { useFetch } from "@lib/useFetch";
 
 const minBullet: BulletType = "min";
 const maxBullet: BulletType = "max";
@@ -19,54 +19,37 @@ const initialMin: number = 0;
 const initialMax: number = 100;
 
 const FixedRange: React.FC = () => {
-  const [min, setMin] = useState<number>(initialMin);
-  const [max, setMax] = useState<number>(initialMax);
   const [minValue, setMinValue] = useState<number>(initialMin);
   const [maxValue, setMaxValue] = useState<number>(initialMax);
   const [minNormalizedValue, setMinNormalizedValue] =
     useState<number>(initialMin);
   const [maxNormalizedValue, setMaxNormalizedValue] =
     useState<number>(initialMax);
-  const [fixedValues, setFixedValues] = useState<number[]>([
-    initialMin,
-    initialMax,
-  ]);
-  const [error, setError] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(true);
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [activeBullet, setActiveBullet] = useState<BulletType | null>(null);
   const [onTopBullet, setOnTopBullet] = useState<BulletType>("max");
   const rangeRef = useRef<HTMLDivElement | null>(null);
 
+  const { rangeValues, min, max, loading, error } = useFetch(true);
+
   useEffect(() => {
-    async function getRange() {
-      const { rangeValues, error }: FixedSliderResponse =
-        await getFixedSliderRange();
-      if (error) {
-        setError(error);
-        setLoading(false);
-      } else if (rangeValues) {
-        const newMin = Math.min(...rangeValues);
-        const newMax = Math.max(...rangeValues);
-        setFixedValues(rangeValues);
-        setMin(newMin);
-        setMax(newMax);
-        setMinValue(newMin);
-        setMaxValue(newMax);
-        setLoading(false);
-      }
-    }
     const handleMouseUp = () => {
       setIsDragging(false);
       setActiveBullet(null);
     };
 
-    getRange();
     document.addEventListener("mouseup", handleMouseUp);
     return () => {
       document.removeEventListener("mouseup", handleMouseUp);
     };
   }, []);
+
+  useEffect(() => {
+    if (min && max) {
+      setMinValue(min);
+      setMaxValue(max);
+    }
+  }, [min, max]);
 
   const handleBulletMouseDown = (
     bullet: BulletType,
@@ -89,13 +72,16 @@ const FixedRange: React.FC = () => {
       if (
         activeBullet === minBullet &&
         newValue !== minValue &&
-        newValue > Math.min(...fixedValues) - 50 // If the condition is removed, bullet is re-rendered when it doesn't make sense, and if newValue > min is left, when moving the cursor very quickly, the minimum is not reached.
+        rangeValues &&
+        min &&
+        max &&
+        newValue > Math.min(...rangeValues) - 50 // If the condition is removed, bullet is re-rendered when it doesn't make sense, and if newValue > min is left, when moving the cursor very quickly, the minimum is not reached.
       ) {
         const newMinValue = +Math.max(
           Math.min(
             findClosestValue(
               denormalizeValue(min, max, newValue),
-              fixedValues,
+              rangeValues,
               false
             ),
             maxValue
@@ -110,13 +96,16 @@ const FixedRange: React.FC = () => {
       } else if (
         activeBullet === maxBullet &&
         newValue !== maxValue &&
-        newValue < Math.max(...fixedValues) * 1.5 // If the condition is removed, it is re-rendered when it doesn't make sense, and if newValue < max is left without a factor, when moving the cursor very quickly, the maximum is not reached.
+        rangeValues &&
+        min &&
+        max &&
+        newValue < Math.max(...rangeValues) * 1.5 // If the condition is removed, it is re-rendered when it doesn't make sense, and if newValue < max is left without a factor, when moving the cursor very quickly, the maximum is not reached.
       ) {
         const newMaxValue = +Math.min(
           Math.max(
             findClosestValue(
               denormalizeValue(min, max, newValue),
-              fixedValues,
+              rangeValues,
               true
             ),
             minValue
@@ -139,7 +128,14 @@ const FixedRange: React.FC = () => {
     };
   }, [isDragging, activeBullet, maxValue, minValue]);
 
-  if (loading) {
+  if (
+    !error &&
+    (loading ||
+      min === null ||
+      max === null ||
+      rangeValues === null ||
+      rangeValues.length < 2)
+  ) {
     return <Skelleton isFixedRange={true} />;
   }
 
@@ -156,7 +152,7 @@ const FixedRange: React.FC = () => {
           offsetX={minNormalizedValue}
           bullet={minBullet}
           isOnTop={onTopBullet === minBullet}
-          min={min}
+          min={min as number}
           max={maxValue}
           currentValue={minValue}
           handleMouseDown={handleBulletMouseDown}
@@ -167,7 +163,7 @@ const FixedRange: React.FC = () => {
           bullet={maxBullet}
           isOnTop={onTopBullet === maxBullet}
           min={minValue}
-          max={max}
+          max={max as number}
           currentValue={maxValue}
           handleMouseDown={handleBulletMouseDown}
         />

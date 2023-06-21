@@ -2,15 +2,15 @@
 
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import s from "../range.module.css";
-import { BulletType, NormalSliderResponse } from "@lib/types";
+import { BulletType } from "@lib/types";
 import InputLabel from "./inputLabel";
 import RangeBullet from "../shared/rangeBullet";
 import RangeLine from "../shared/rangeLine";
 import denormalizeValue from "@lib/denormalizeValue";
 import normalizeValue from "@lib/normalizeValue";
-import getNormalSliderRange from "@services/getNormalSliderRange";
 import ErrorMessage from "@components/errorMessage";
 import Skelleton from "../shared/skelleton";
+import { useFetch } from "@lib/useFetch";
 
 const minBullet: BulletType = "min";
 const maxBullet: BulletType = "max";
@@ -18,8 +18,6 @@ const initialMin: number = 0;
 const initialMax: number = 100;
 
 const NormalRange: React.FC = () => {
-  const [min, setMin] = useState<number>(initialMin);
-  const [max, setMax] = useState<number>(initialMax);
   const [minValue, setMinValue] = useState<number>(initialMin);
   const [maxValue, setMaxValue] = useState<number>(initialMax);
   const [minLabelValue, setMinLabelValue] = useState<string>(
@@ -29,38 +27,30 @@ const NormalRange: React.FC = () => {
     initialMax.toString()
   );
   const [isDragging, setIsDragging] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(true);
   const [activeBullet, setActiveBullet] = useState<BulletType | null>(null);
   const [onTopBullet, setOnTopBullet] = useState<BulletType>("max");
   const rangeRef = useRef<HTMLDivElement | null>(null);
 
+  const { min, max, loading, error } = useFetch(false);
+
   useEffect(() => {
-    async function getRange() {
-      const { min, max, error }: NormalSliderResponse =
-        await getNormalSliderRange();
-      if (error) {
-        setError(error);
-        setLoading(false);
-      } else if (min && max) {
-        setMin(min);
-        setMinLabelValue(min.toString());
-        setMax(max);
-        setMaxLabelValue(max.toString());
-        setLoading(false);
-      }
-    }
     const handleMouseUp = () => {
       setIsDragging(false);
       setActiveBullet(null);
     };
 
-    getRange();
     document.addEventListener("mouseup", handleMouseUp);
     return () => {
       document.removeEventListener("mouseup", handleMouseUp);
     };
   }, []);
+
+  useEffect(() => {
+    if (min && max) {
+      setMinLabelValue(min.toString());
+      setMaxLabelValue(max.toString());
+    }
+  }, [min, max]);
 
   const handleBulletMouseDown = (
     bullet: BulletType,
@@ -73,7 +63,7 @@ const NormalRange: React.FC = () => {
 
   const handleBulletChange = useCallback(
     (newValue: number, activeBullet: string) => {
-      if (activeBullet === minBullet && newValue !== +minValue) {
+      if (activeBullet === minBullet && newValue !== +minValue && min && max) {
         const newMinValue = +Math.max(Math.min(newValue, maxValue), 0).toFixed(
           2
         );
@@ -83,7 +73,12 @@ const NormalRange: React.FC = () => {
           +maxLabelValue
         ).toFixed(0);
         setMinLabelValue(newMinLabelValue);
-      } else if (activeBullet === maxBullet && newValue !== +maxValue) {
+      } else if (
+        activeBullet === maxBullet &&
+        newValue !== +maxValue &&
+        min &&
+        max
+      ) {
         const newMaxValue = +Math.min(
           Math.max(newValue, minValue),
           100
@@ -132,12 +127,12 @@ const NormalRange: React.FC = () => {
     if (bullet === minBullet) {
       setMinLabelValue(newValue);
       if (!isError) {
-        setMinValue(normalizeValue(min, max, +newValue));
+        setMinValue(normalizeValue(min as number, max as number, +newValue));
       }
     } else if (bullet === maxBullet) {
       setMaxLabelValue(newValue);
       if (!isError) {
-        setMaxValue(normalizeValue(min, max, +newValue));
+        setMaxValue(normalizeValue(min as number, max as number, +newValue));
       }
     }
   };
@@ -163,7 +158,7 @@ const NormalRange: React.FC = () => {
     }
   };
 
-  if (loading) {
+  if (!error && (loading || min === null || max === null)) {
     return <Skelleton />;
   }
 
@@ -175,7 +170,7 @@ const NormalRange: React.FC = () => {
     <div className={s.root}>
       <InputLabel
         value={minLabelValue}
-        min={min}
+        min={min as number}
         max={+maxLabelValue}
         bullet={minBullet}
         handleLabelChange={handleLabelChange}
@@ -186,7 +181,7 @@ const NormalRange: React.FC = () => {
           offsetX={+minValue}
           bullet={minBullet}
           isOnTop={onTopBullet === minBullet}
-          min={min}
+          min={min as number}
           max={+maxLabelValue}
           currentValue={+minLabelValue}
           handleMouseDown={handleBulletMouseDown}
@@ -198,7 +193,7 @@ const NormalRange: React.FC = () => {
           bullet={maxBullet}
           isOnTop={onTopBullet === maxBullet}
           min={+minLabelValue}
-          max={max}
+          max={max as number}
           currentValue={+maxLabelValue}
           handleMouseDown={handleBulletMouseDown}
           handleKeyDown={handleBulletKeyDown}
@@ -208,7 +203,7 @@ const NormalRange: React.FC = () => {
       <InputLabel
         value={maxLabelValue}
         min={+minLabelValue}
-        max={max}
+        max={max as number}
         bullet={maxBullet}
         handleLabelChange={handleLabelChange}
       />

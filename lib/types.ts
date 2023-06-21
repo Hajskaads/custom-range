@@ -16,8 +16,11 @@ export type NormalSliderResponse = {
   max?: number;
   error?: string;
 };
-export type NormalSliderDataOrErrorResponse = {
+export type NormalSliderResponseData = {
   data: NormalSliderResponse;
+};
+export type FixedSliderResponseData = {
+  data: FixedSliderDataResponse;
 };
 export type FixedSliderResponse = {
   rangeValues?: number[];
