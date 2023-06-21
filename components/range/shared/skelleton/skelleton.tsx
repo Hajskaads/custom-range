@@ -7,7 +7,7 @@ interface SkelletonProps {
 
 const Skelleton: FC<SkelletonProps> = ({ isFixedRange }) => {
   return (
-    // <div className={s.pulse}> //TODO: Doesn't work -> Please enable a CSS nesting plugin *before* Tailwind in your configuration.
+    // <div className={s.pulse}> // Needs to enable a CSS nesting. Plugin *before* Tailwind in your configuration.
     <div className="animate-pulse">
       <div className={s.root}>
         <div

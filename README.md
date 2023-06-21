@@ -49,7 +49,6 @@ Since the allowed bullet values are only the ones provided by the valuesRange, t
 
 # Improvements for the next iteration:
 
-- Custom hook para guardar los datos de la llamada a la API
-- Both <NormalRange /> and <FixedRange /> render twice when <Range /> is mounted, as can be seen in the last case of their corresponging test files. Making them only render once could boost performance
+- Developping more tests to test all the functionallity.
 - Making iteracting accesibility with keys in the FixedSlider.
-- Implementing Suspense when the APIs in the Ranges are loaded.
+- Implementing Suspense in the Ranges, when the APIs are being loaded.
