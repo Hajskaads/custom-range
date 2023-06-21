@@ -2,7 +2,6 @@ import React from "react";
 import { render, act, screen, fireEvent } from "@testing-library/react";
 import FixedRange from "@components/range/fixedRange";
 import getFixedSliderRange from "@services/getFixedSliderRange";
-import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 
 jest.mock("services/getFixedSliderRange");
