@@ -21,7 +21,7 @@ describe("InputLabel", () => {
       />
     );
 
-    const input = getByLabelText("Enter a number");
+    const input = getByLabelText(`Enter a ${bullet} slider number`);
     fireEvent.change(input, { target: { value: "20" } });
 
     expect(handleLabelChangeMock).toHaveBeenCalledWith("20", bullet, false);
@@ -44,7 +44,7 @@ describe("InputLabel", () => {
       />
     );
 
-    const input = getByLabelText("Enter a number");
+    const input = getByLabelText(`Enter a ${bullet} slider number`);
     fireEvent.change(input, { target: { value: "abc" } });
 
     expect(handleLabelChangeMock).toHaveBeenCalledWith("", bullet, true);
@@ -70,7 +70,7 @@ describe("InputLabel", () => {
       />
     );
 
-    const input = getByLabelText("Enter a number");
+    const input = getByLabelText(`Enter a ${bullet} slider number`);
     fireEvent.change(input, { target: { value: "101" } });
 
     expect(handleLabelChangeMock).not.toHaveBeenCalledWith("101", bullet, true);
@@ -93,7 +93,7 @@ describe("InputLabel", () => {
       />
     );
 
-    const input = getByLabelText("Enter a number");
+    const input = getByLabelText(`Enter a ${bullet} slider number`);
     fireEvent.change(input, { target: { value: "9" } });
 
     expect(handleLabelChangeMock).not.toHaveBeenCalledWith("9", bullet, true);
@@ -116,7 +116,7 @@ describe("InputLabel", () => {
       />
     );
 
-    const input = getByLabelText("Enter a number");
+    const input = getByLabelText(`Enter a ${bullet} slider number`);
     fireEvent.change(input, { target: { value: "29" } });
 
     expect(handleLabelChangeMock).not.toHaveBeenCalledWith("29", bullet, true);
@@ -139,7 +139,7 @@ describe("InputLabel", () => {
       />
     );
 
-    const input = getByLabelText("Enter a number");
+    const input = getByLabelText(`Enter a ${bullet} slider number`);
     fireEvent.change(input, { target: { value: "9" } });
 
     expect(handleLabelChangeMock).not.toHaveBeenCalledWith("71", bullet, true);
