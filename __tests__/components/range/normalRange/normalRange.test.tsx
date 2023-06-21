@@ -1,5 +1,11 @@
 import React from "react";
-import { render, act, screen, fireEvent } from "@testing-library/react";
+import {
+  render,
+  act,
+  screen,
+  fireEvent,
+  waitFor,
+} from "@testing-library/react";
 import NormalRange from "@components/range/normalRange";
 import getNormalSliderRange from "@services/getNormalSliderRange";
 import "@testing-library/jest-dom";
@@ -51,7 +57,7 @@ describe("NormalRange", () => {
     const minBullet = screen.getByRole("slider", { name: /bullet-min/i });
 
     // Simulate mousedown event on the element
-    fireEvent.mouseDown(minBullet);
+    await fireEvent.mouseDown(minBullet);
 
     // Simulate mousemove event to the right, overpassing max limit
     fireEvent.mouseMove(minBullet, { clientX: 120 });
@@ -59,9 +65,11 @@ describe("NormalRange", () => {
     // Simulate mouseup event to release the drag
     fireEvent.mouseUp(minBullet);
 
-    expect(minBullet).toHaveStyle({
-      left: `calc(${100}% - 0.5rem)`,
-    });
+    waitFor(() =>
+      expect(minBullet).toHaveStyle({
+        left: `calc(${100}% - 0.5rem)`,
+      })
+    );
   });
 
   it("The max bullet moves accordingly to the left when dragged by the mouse, never surpassing the min value", async () => {
@@ -76,16 +84,17 @@ describe("NormalRange", () => {
     const maxBullet = screen.getByRole("slider", { name: /bullet-max/i });
 
     // Simulate mousedown event on the element
-    fireEvent.mouseDown(maxBullet);
+    await fireEvent.mouseDown(maxBullet);
 
     // Simulate mousemove event to the right, overpassing max limit
     fireEvent.mouseMove(maxBullet, { clientX: -120 });
 
     // Simulate mouseup event to release the drag
     fireEvent.mouseUp(maxBullet);
-
-    expect(maxBullet).toHaveStyle({
-      left: `calc(${0}% - 0.5rem)`,
-    });
+    waitFor(() =>
+      expect(maxBullet).toHaveStyle({
+        left: `calc(${0}% - 0.5rem)`,
+      })
+    );
   });
 });

@@ -1,5 +1,11 @@
 import React from "react";
-import { render, act, screen, fireEvent } from "@testing-library/react";
+import {
+  render,
+  act,
+  screen,
+  fireEvent,
+  waitFor,
+} from "@testing-library/react";
 import FixedRange from "@components/range/fixedRange";
 import getFixedSliderRange from "@services/getFixedSliderRange";
 import "@testing-library/jest-dom";
@@ -46,17 +52,18 @@ describe("FixedRange", () => {
     const minBullet = screen.getByRole("slider", { name: /bullet-min/i });
 
     // Simulate mousedown event on the element
-    fireEvent.mouseDown(minBullet);
+    await fireEvent.mouseDown(minBullet);
 
     // Simulate mousemove event to the right, overpassing max limit
     fireEvent.mouseMove(minBullet, { clientX: 120 });
 
     // Simulate mouseup event to release the drag
     fireEvent.mouseUp(minBullet);
-
-    expect(minBullet).toHaveStyle({
-      left: `calc(${100}% - 0.5rem)`,
-    });
+    waitFor(() =>
+      expect(minBullet).toHaveStyle({
+        left: `calc(${100}% - 0.5rem)`,
+      })
+    );
   });
   it("The min bullet moves accordingly to the right when dragged by the mouse, never surpassing the max value", async () => {
     getFixedSliderRange.mockResolvedValueOnce({
@@ -69,7 +76,7 @@ describe("FixedRange", () => {
     const maxBullet = screen.getByRole("slider", { name: /bullet-max/i });
 
     // Simulate mousedown event on the element
-    fireEvent.mouseDown(maxBullet);
+    await fireEvent.mouseDown(maxBullet);
 
     // Simulate mousemove event to the right, overpassing max limit
     fireEvent.mouseMove(maxBullet, { clientX: -120 });
@@ -77,8 +84,10 @@ describe("FixedRange", () => {
     // Simulate mouseup event to release the drag
     fireEvent.mouseUp(maxBullet);
 
-    expect(maxBullet).toHaveStyle({
-      left: `calc(${0}% - 0.5rem)`,
-    });
+    waitFor(() =>
+      expect(maxBullet).toHaveStyle({
+        left: `calc(${0}% - 0.5rem)`,
+      })
+    );
   });
 });
