@@ -9,7 +9,6 @@ const rangeValues = [1.99, 5.99, 10.99, 30.99, 50.99, 70.99]; // Set the expecte
 
 describe("FixedRange", () => {
   it("It fetches the data from the API correctly and displays it in its min and max labels", async () => {
-    // @ts-ignore
     getFixedSliderRange.mockResolvedValueOnce({
       rangeValues,
     });
@@ -24,7 +23,6 @@ describe("FixedRange", () => {
   });
   it("It the API returns an error it displays it correctly and no slider can be found", async () => {
     const errorText: string = "Error 500";
-    // @ts-ignore
     getFixedSliderRange.mockResolvedValueOnce({
       error: errorText,
     });
@@ -38,7 +36,6 @@ describe("FixedRange", () => {
   });
 
   it("The min bullet moves accordingly to the right when dragged by the mouse, never surpassing the max value", async () => {
-    // @ts-ignore
     getFixedSliderRange.mockResolvedValueOnce({
       rangeValues,
     });
@@ -62,7 +59,6 @@ describe("FixedRange", () => {
     });
   });
   it("The min bullet moves accordingly to the right when dragged by the mouse, never surpassing the max value", async () => {
-    // @ts-ignore
     getFixedSliderRange.mockResolvedValueOnce({
       rangeValues,
     });
