@@ -18,10 +18,15 @@ While mounting, they also set an Event Listener on document for the mouseup even
 
 # Common logic for both ranges
 
-## State
+## useEffect custom Hook
 
 - min: min value that represents the minimum constraint of the range returned by the API
 - max: max value that represents the maximum constraint of the range returned by the API
+- loading: Used to show an skelleton while waiting for the API answer.
+- error: text error to show if the API call fails
+
+## State
+
 - minValue (NormalRange) / minNormalizedValue (FixedRange): min normalized (%) value of the min bullet. Since the bullet moves on a line with length 100%, minValue is the percentage of possition offset of the bullet in this line
 - maxValue (NormalRange) / maxNormalizedValue (FixedRange): max normalized (%) value of the max bullet. Since the bullet moves on a line with length 100%, maxValue is the percentage of possition offset of the bullet in this line
 - minValue (NormalRange) / minLabelValue (FixedRange): min real value of the min bullet within the range of values constrained by min and max.
@@ -29,9 +34,7 @@ While mounting, they also set an Event Listener on document for the mouseup even
 - isDragging: if the
 - Active bullet: Represents the bullet of the range being mouse-dragged
 - isDragging: Used for determining if the user is currently dragging a bullet in that moment.
-- loading: Used to show an skelleton while waiting for the API answer.
 - onTopBullet: Used to be sure that the last bullet moved remains on top of the toher one using a greater z-index. Used for preventing the inability of the user to drag the right bullet at the end of the line in case both are at the end and the one that needs to be moved to unlock the other one is at the bottom in the z-index scale.
-- error: text error to show if the API call fails
 
 ## Functionality.
 
@@ -49,6 +52,6 @@ Since the allowed bullet values are only the ones provided by the valuesRange, t
 
 # Improvements for the next iteration:
 
-- Developping more tests to test all the functionallity.
+- More tests.
 - Making iteracting accesibility with keys in the FixedSlider.
 - Implementing Suspense in the Ranges, when the APIs are being loaded.
