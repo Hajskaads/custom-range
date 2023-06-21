@@ -16,7 +16,7 @@ const mockMax = 70; // Set the expected value for max
 
 describe("NormalRange", () => {
   it("It fetches the data from the API correctly and displays it in its min and max labels", async () => {
-    getNormalSliderRange.mockResolvedValueOnce({
+    (getNormalSliderRange as any).mockResolvedValueOnce({
       min: mockMin,
       max: mockMax,
     });
@@ -33,7 +33,7 @@ describe("NormalRange", () => {
   it("It the API returns an error it displays it correctly and no slider can be found", async () => {
     const errorText: string = "Error 500";
 
-    getNormalSliderRange.mockResolvedValueOnce({
+    (getNormalSliderRange as any).mockResolvedValueOnce({
       error: errorText,
     });
     await act(async () => {
@@ -46,7 +46,7 @@ describe("NormalRange", () => {
   });
 
   it("The min bullet moves accordingly to the right when dragged by the mouse, never surpassing the max value", async () => {
-    getNormalSliderRange.mockResolvedValueOnce({
+    (getNormalSliderRange as any).mockResolvedValueOnce({
       min: mockMin,
       max: mockMax,
     });
@@ -73,7 +73,7 @@ describe("NormalRange", () => {
   });
 
   it("The max bullet moves accordingly to the left when dragged by the mouse, never surpassing the min value", async () => {
-    getNormalSliderRange.mockResolvedValueOnce({
+    (getNormalSliderRange as any).mockResolvedValueOnce({
       min: mockMin,
       max: mockMax,
     });

@@ -22,7 +22,7 @@ describe("getNormalSliderRange", () => {
       json: jest.fn().mockResolvedValue({ error: "Not found" }),
     };
 
-    jest.spyOn(window, "fetch").mockResolvedValue(mockResponse);
+    jest.spyOn(window, "fetch").mockResolvedValue(mockResponse as any);
 
     const result = await getNormalSliderRange();
 
@@ -36,7 +36,7 @@ describe("getNormalSliderRange", () => {
       json: jest.fn().mockResolvedValue({ min: "1", max: "10" }),
     };
 
-    jest.spyOn(window, "fetch").mockResolvedValue(mockResponse);
+    jest.spyOn(window, "fetch").mockResolvedValue(mockResponse as any);
 
     const result = await getNormalSliderRange();
 
@@ -50,7 +50,7 @@ describe("getNormalSliderRange", () => {
       json: jest.fn().mockResolvedValue({ min: 10, max: 1 }),
     };
 
-    jest.spyOn(window, "fetch").mockResolvedValue(mockResponse);
+    jest.spyOn(window, "fetch").mockResolvedValue(mockResponse as any);
 
     const result = await getNormalSliderRange();
 
@@ -64,7 +64,7 @@ describe("getNormalSliderRange", () => {
       json: jest.fn().mockResolvedValue({ error: "Custom error message" }),
     };
 
-    jest.spyOn(window, "fetch").mockResolvedValue(mockResponse);
+    jest.spyOn(window, "fetch").mockResolvedValue(mockResponse as any);
 
     const result = await getNormalSliderRange();
 
